@@ -162,10 +162,14 @@ Si esto funciona, el servidor esta ejecutandose!, revisa el `app/api/__init__.py
 
 <!-- ## 🧩 Roadmap
 
-* [ ] Implementar capa de queries JSON con JMESPath.
+* [ ] Añadir tests automáticos (pytest).
+* [ ] Entender e implementar encriptacion y desencriptacion
+* [ ] Crear una seed de datos para trabajar
+* [ ] Implementar capa de queries JSON con jsonpath-ng.
+* [ ] Implementar Patron repository
 * [ ] Añadir objetos de dominio (serialización/deserialización).
-* [ ] Agregar capa de autenticación JWT.
+* [ ] Hacer API REST
+* [ ] Implementar chat con websockets
 * [ ] Conectar servicio de notificaciones vía WebSockets.
 * [ ] Implementar cron jobs de limpieza.
-* [ ] Añadir tests automáticos (pytest).
  -->
