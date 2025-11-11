@@ -1,0 +1,19 @@
+name: "nexu_backend"
+
+services:
+  backend:
+    container_name: backend
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app/app
+      # JSONS de la persistencia de datos
+      - ./db:/app/db
+      # Persistencia de logs
+      - ./logs:/app/logs
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
