@@ -1,4 +1,6 @@
 logs/
+seed/*.json
+db/*.enc
 
 __pycache__
 .coverage
