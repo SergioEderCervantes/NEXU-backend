@@ -6,7 +6,7 @@ from app.infraestructure.encription_service import EncryptionManager
 
 class UserRepository(BaseRepository[User]):
     def __init__(self, file_manager: FileManager, encryption_manager: EncryptionManager):
-        super().__init__(file_manager, encryption_manager, DbFile.USERS, 'usuarios')
+        super().__init__(file_manager, encryption_manager, DbFile.USERS, 'users')
 
     def _to_entity(self, item: dict) -> User:
         return User(**item)

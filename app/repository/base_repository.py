@@ -5,6 +5,9 @@ import json
 from app.infraestructure.file_service import FileManager
 from app.infraestructure.encription_service import EncryptionManager
 from app.domain.entities import BaseEntity, DbFile
+import logging
+
+logger = logging.getLogger('app')
 
 T = TypeVar('T', bound=BaseEntity)
 
@@ -33,8 +36,10 @@ class BaseRepository(ABC, Generic[T]):
 
     def find_all(self) -> List[T]:
         data = self._get_data()
+        logger.debug(f"Data sacado del get_data: {data}")
         jsonpath_expression = parse(f'$.{self.entity_name}[*]')
         matches = jsonpath_expression.find(data)
+        logger.debug(f"Matches: {matches}")
         return [self._to_entity(match.value) for match in matches]
 
     def find_by_attribute(self, attribute: str, value) -> Optional[T]:

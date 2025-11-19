@@ -14,8 +14,4 @@ services:
       - ./db:/app/db
       # Persistencia de logs
       - ./logs:/app/logs
-    environment:
-      - FLASK_ENV=development
-      - PYTHONUNBUFFERED=1
-      - LOG_LEVEL=INFO
     restart: unless-stopped

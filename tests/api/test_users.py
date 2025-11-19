@@ -1,6 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask, jsonify
+from unittest.mock import patch
 from app.main import create_app
 from app.domain.entities import User
 

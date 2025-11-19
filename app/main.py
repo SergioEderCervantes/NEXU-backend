@@ -4,7 +4,9 @@ from flask_socketio import SocketIO
 from app.config.logger import setup_logging
 from app.middleware.logging_middleware import log_request_time
 from app.api import register_blueprints
-logger = setup_logging()
+import logging
+
+logger = setup_logging(logging_level=logging.DEBUG)
 # TODO: Mover esta config a un settings.py
 socketio = SocketIO(cors_allowed_origins="*")
 
