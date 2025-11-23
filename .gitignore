@@ -4,3 +4,6 @@ db/*.enc
 
 __pycache__
 .coverage
+
+
+.env
