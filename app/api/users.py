@@ -2,7 +2,9 @@ from flask import Blueprint, jsonify
 from app.repository.user_repository import UserRepository
 from app.infraestructure.file_service import FileManager
 from app.infraestructure.encription_service import EncryptionManager
+import logging
 
+logger = logging.getLogger('app')
 # Create instances of the services and repository
 # In a real app, this would be handled by a dependency injection container
 file_manager = FileManager()
@@ -24,4 +26,5 @@ def get_all_users():
         return jsonify(users_dict), 200
     except Exception as e:
         # Log the exception e
-        return jsonify({"error": "An unexpected error occurred."}), 500
+        logger.error(e)
+        return jsonify({"error": "Ocurrio un error inesperado"}), 500
