@@ -1,11 +1,16 @@
 import logging
-from typing import  List
+import jwt
+from datetime import datetime, timedelta
+from typing import List
 from app.infraestructure.encription_service import EncryptionManager
 from app.infraestructure.file_service import FileManager
 from app.repository.user_repository import UserRepository
 from app.domain.entities import User, verify_password
-from app.domain.exceptions import UserAlreadyExistsException, InvalidCredentialsException
-
+from app.domain.exceptions import (
+    UserAlreadyExistsException,
+    InvalidCredentialsException,
+)
+from app.config.settings import Config
 
 logger = logging.getLogger('app')
 
@@ -13,54 +18,60 @@ class LoginService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    def signup(self, raw_user_data: dict) -> User:
+    def _create_access_token(self, user_id: int) -> str:
         """
-        Registers a new user after checking for duplicates and filling in necessary data.
-        Raises UserAlreadyExistsException if the email is already taken.
+        Generates a new JWT access token.
+        """
+        to_encode = {
+            "sub": user_id,
+            "exp": datetime.utcnow() + timedelta(minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES)
+        }
+        encoded_jwt = jwt.encode(to_encode, Config.JWT_SECRET_KEY, algorithm=Config.JWT_ALGORITHM)
+        return encoded_jwt
+
+    def signup(self, raw_user_data: dict) -> str:
+        """
+        Registers a new user and returns a JWT access token upon successful creation.
         """
         logger.info("Attempting to register a new user.")
         
         email = raw_user_data.get('email')
         if not email:
             logger.error("Signup failed: Email is missing from raw user data.")
-            raise ValueError("Email is required.") # Use a more specific exception if needed
+            raise ValueError("Email is required.")
             
-        # Check if user already exists by email
         if self.user_repository.find_by_email(email):
             logger.warning(f"Signup failed: user with email '{email}' already exists.")
             raise UserAlreadyExistsException()
 
-        # Fill in system-managed data (like ID from email prefix, is_active)
         filled_data = self._fill_user_data(raw_user_data)
-        
-        # Create User entity. Pydantic's @model_validator handles password hashing automatically.
         new_user = User(**filled_data)
         
         self.user_repository.add(new_user)
         logger.info(f"Successfully registered user with ID: {new_user.id}, email: {new_user.email}")
         
-        # TODO: Ahorita retorna el new user, pero se va a usar JWT, entonces se debe de regeresar eso
-        return new_user
+        # Generate a token for the new user
+        return self._create_access_token(user_id=new_user.id)
 
-    def login(self, email: str, password: str) -> User:
+    def login(self, email: str, password: str) -> str:
         """
-        Authenticates a user with provided email and password.
-        Raises InvalidCredentialsException if authentication fails.
+        Authenticates a user and returns a JWT access token upon success.
         """
         logger.info(f"Attempting to log in user with email: {email}")
         
         user = self.user_repository.find_by_email(email)
         if not user:
             logger.warning(f"Login failed: User with email '{email}' not found.")
-            raise InvalidCredentialsException() # Don't specify if email or password was wrong for security
+            raise InvalidCredentialsException()
 
-        # Verify the provided password against the stored hashed password
         if not verify_password(password, user.password):
             logger.warning(f"Login failed for user '{email}': incorrect password.")
             raise InvalidCredentialsException()
 
         logger.info(f"User '{email}' logged in successfully.")
-        return user
+        
+        # Generate and return the token
+        return self._create_access_token(user_id=user.id)
 
     def get_all_users(self) -> List[User]:
         """
@@ -73,9 +84,7 @@ class LoginService:
     def _fill_user_data(self, raw_user_data: dict) -> dict:
         """
         Fills in system-managed user data like ID from email prefix and active status.
-        Password hashing is handled by the User entity's Pydantic validator.
         """
-        # Ensure email is present before trying to extract ID
         email = raw_user_data.get('email')
         if email:
             try:
@@ -90,13 +99,9 @@ class LoginService:
             raise ValueError("Email is required for ID generation.")
 
         raw_user_data['is_active'] = True
-        
-        # The Pydantic User model's @model_validator handles password hashing on instantiation.
-        
         return raw_user_data
 
 # Initialize dependencies for the LoginService
-# These should ideally be injected, but for simplicity here they are instantiated directly.
 file_manager = FileManager()
 encryption_manager = EncryptionManager()
 user_repository = UserRepository(file_manager, encryption_manager)

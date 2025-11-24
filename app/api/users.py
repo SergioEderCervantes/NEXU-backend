@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, g
 import logging
 from pydantic import ValidationError
 from app.application.LoginService import login_service
@@ -6,6 +6,7 @@ from app.domain.exceptions import (
     UserAlreadyExistsException,
     InvalidCredentialsException,
 )
+from app.middleware.auth import token_required
 
 logger = logging.getLogger("app")
 
@@ -14,14 +15,17 @@ users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
 @users_bp.route("/", methods=["GET"])
+@token_required
 def get_all_users():
     """
-    Get all users from the database.
+    Get all users from the database. Requires a valid token.
     """
     try:
+        # The `current_user` is attached to `g` by the `@token_required` decorator.
+        # We can add logic here, e.g., to check if g.current_user is an admin.
+        # For now, we just proceed.
         users = login_service.get_all_users()
-        # Pydantic models must be converted to dicts for JSON serialization
-        users_dict = [user.model_dump() for user in users]
+        users_dict = [user.model_dump(exclude={'password'}) for user in users]
         return jsonify(users_dict), 200
     except Exception as e:
         logger.error(f"Error retrieving all users: {e}")
@@ -30,10 +34,21 @@ def get_all_users():
         ), 500
 
 
+@users_bp.route("/me", methods=["GET"])
+@token_required
+def get_current_user():
+    """
+    Get the profile of the currently logged-in user. Requires a valid token.
+    """
+    # The user object is attached to Flask's global `g` object by the decorator.
+    current_user = g.current_user
+    return jsonify(current_user.model_dump(exclude={'password'})), 200
+
+
 @users_bp.route("/signup", methods=["POST"])
 def signup():
     """
-    Registers a new user.
+    Registers a new user and returns a JWT on success.
     """
     try:
         data = request.get_json()
@@ -41,15 +56,14 @@ def signup():
             logger.warning("Signup attempt with no JSON data.")
             return jsonify({"error": "Se requiere un cuerpo de solicitud JSON."}), 400
 
-        new_user = login_service.signup(data)
-        return jsonify(new_user.model_dump()), 201
+        access_token = login_service.signup(data)
+        return jsonify({"access_token": access_token, "token_type": "bearer"}), 201
     except ValidationError as e:
-        # Pydantic's validation errors are parsed into a more user-friendly format.
         error_details = [
             f"El campo '{err['loc'][0]}' {err['msg'].lower()}" for err in e.errors()
         ]
         logger.warning(f"Signup failed due to validation error: {error_details}")
-        return jsonify({"error": "Datos de entrada inválidos.", "detalles": error_details}), 400
+        return jsonify({"error": "Datos de entrada inválidos.", "detalles": error_details}), 422
     except UserAlreadyExistsException as e:
         logger.warning(f"Signup failed: {e.message}")
         return jsonify({"error": e.message}), 409
@@ -66,7 +80,7 @@ def signup():
 @users_bp.route("/login", methods=["POST"])
 def login():
     """
-    Authenticates a user and returns user data if successful.
+    Authenticates a user and returns a JWT on success.
     """
     try:
         data = request.get_json()
@@ -81,9 +95,8 @@ def login():
             logger.warning("Login attempt with missing email or password.")
             return jsonify({"error": "Email y contraseña son requeridos."}), 400
 
-        user = login_service.login(email, password)
-        # For security, you might want to return a subset of user data or a token
-        return jsonify(user.model_dump()), 200
+        access_token = login_service.login(email, password)
+        return jsonify({"access_token": access_token, "token_type": "bearer"}), 200
     except InvalidCredentialsException as e:
         logger.warning(f"Login failed: {e.message}")
         return jsonify({"error": e.message}), 401
