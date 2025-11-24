@@ -42,7 +42,7 @@ class UserRepository(BaseRepository[User]):
         Returns:
             Optional[User]: The User entity if found, otherwise None.
         """
-        return self.find_by_attribute('nombre_usuario', username)
+        return self.find_by_attribute('name', username)
 
     def find_by_email(self, email: str) -> Optional[User]:
         """
@@ -54,4 +54,4 @@ class UserRepository(BaseRepository[User]):
         Returns:
             Optional[User]: The User entity if found, otherwise None.
         """
-        return self.find_by_attribute('correo_electronico', email)
+        return self.find_by_attribute('email', email)
