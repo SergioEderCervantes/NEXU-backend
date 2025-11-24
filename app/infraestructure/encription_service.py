@@ -18,10 +18,8 @@ class EncryptionManager:
     @timed_task("encrypt_data")
     def encrypt_data(self, data: str) -> bytes:
         try:
-            logger.debug(f"Inicializando la encriptacion de: {data}")
             data_bytes = data.encode()
             encripted = self.fernet.encrypt(data_bytes)
-            logger.debug("Encriptacion completada")
             return encripted
         except Exception as e:
             raise RuntimeError("Error al encriptar los datos: " + str(e))
@@ -29,10 +27,8 @@ class EncryptionManager:
     @timed_task("decrypt_data")
     def decrypt_data(self, token: bytes) -> str:
         try:
-            logger.debug(f"Inicializando la desencriptacion de: {token}")
             data_bytes = self.fernet.decrypt(token)
             decripted = data_bytes.decode()
-            logger.debug(f"Desencriptacion completada de: {decripted}")
             return decripted
         except (InvalidToken, TypeError, ValueError) as e:
             raise ValueError("Error al desencriptar el token: " + str(e))

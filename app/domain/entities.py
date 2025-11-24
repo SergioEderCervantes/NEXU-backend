@@ -1,8 +1,9 @@
 from enum import Enum
 import os
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import  Optional
 from app.config.settings import Config
+
 
 class DbFile(Enum):
     USERS = os.path.join(Config.BASE_PATH, "Usuarios.json.enc")
@@ -12,8 +13,10 @@ class DbFile(Enum):
     REQUESTS = os.path.join(Config.BASE_PATH, "Solicitudes.json.enc")
     TAGS = os.path.join(Config.BASE_PATH, "Tags.json.enc")
 
+
 class BaseEntity(BaseModel):
     id: int = Field(..., gt=0)
+
 
 class User(BaseEntity):
     name: str
@@ -23,3 +26,4 @@ class User(BaseEntity):
     gender: str
     bio: Optional[str] = None
     reputation: int = 0
+
