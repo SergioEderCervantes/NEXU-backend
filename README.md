@@ -159,10 +159,23 @@ Si esto funciona, el servidor esta ejecutandose!, revisa el `app/api/__init__.py
 
 ---
 
+## Ejecucion de test con coverage:
+
+```bash
+     python -m pytest --cov=app --cov-report=html --cov-report=term-missing
+```
+
+-> Si lo quieres con Docker:
+
+```bash
+     docker compose exec python -m pytest --cov=app --cov-report=html --cov-report=term-missing
+```
+
 
 <!-- ## 🧩 Roadmap
 
 * [ ] Añadir tests automáticos (pytest).
+
 * [ ] Entender e implementar encriptacion y desencriptacion
 * [ ] Crear una seed de datos para trabajar
 * [ ] Implementar capa de queries JSON con jsonpath-ng.

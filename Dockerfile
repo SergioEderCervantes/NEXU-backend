@@ -13,5 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el código
 COPY app/ /app/
 
+# Copiar test
+COPY tests/ /app/tests
+
 # Comando de inicio
 CMD ["python", "-m", "app.main"]
