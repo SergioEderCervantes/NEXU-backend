@@ -23,10 +23,10 @@ class LoginService:
         Generates a new JWT access token.
         """
         to_encode = {
-            "sub": user_id,
+            "sub": str(user_id),
             "exp": datetime.utcnow() + timedelta(minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES)
         }
-        encoded_jwt = jwt.encode(to_encode, Config.JWT_SECRET_KEY, algorithm=Config.JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, Config.JWT_SECRET_KEY, algorithm=Config.JWT_ALGORITHM) # type: ignore
         return encoded_jwt
 
     def signup(self, raw_user_data: dict) -> str:
