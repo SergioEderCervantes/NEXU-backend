@@ -933,3 +933,69 @@ Exception: Something went very wrong
 2025-11-25 20:19:14 | INFO | app | wrapper | Inicio de tarea: decrypt_data
 2025-11-25 20:19:14 | INFO | app | wrapper | Tarea: decrypt_data completada en: 0.00s
 2025-11-25 20:19:14 | INFO | app | log_response | ← GET /users/ [200] 0.052s
+2025-11-25 21:24:57 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:57 | INFO | app | start_timer | → GET /health/
+2025-11-25 21:24:57 | INFO | app | log_response | ← GET /health/ [200] 0.000s
+2025-11-25 21:24:57 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:57 | INFO | app | start_timer | → GET /users/
+2025-11-25 21:24:57 | INFO | app | decorated_function | Iniciando tarea de validacion de token
+2025-11-25 21:24:57 | INFO | app | decorated_function | Decodificando el JWT
+2025-11-25 21:24:57 | INFO | app | decorated_function | JWT decodificado, id del user: 1
+2025-11-25 21:24:57 | INFO | app | log_response | ← GET /users/ [200] 0.001s
+2025-11-25 21:24:57 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:58 | INFO | app | start_timer | → GET /users/
+2025-11-25 21:24:58 | INFO | app | decorated_function | Iniciando tarea de validacion de token
+2025-11-25 21:24:58 | INFO | app | decorated_function | Decodificando el JWT
+2025-11-25 21:24:58 | INFO | app | decorated_function | JWT decodificado, id del user: 1
+2025-11-25 21:24:58 | INFO | app | log_response | ← GET /users/ [200] 0.001s
+2025-11-25 21:24:58 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:58 | INFO | app | start_timer | → GET /users/
+2025-11-25 21:24:58 | INFO | app | decorated_function | Iniciando tarea de validacion de token
+2025-11-25 21:24:58 | INFO | app | decorated_function | Decodificando el JWT
+2025-11-25 21:24:58 | INFO | app | decorated_function | JWT decodificado, id del user: 1
+2025-11-25 21:24:58 | ERROR | app | get_all_users | Error retrieving all users: Database error
+2025-11-25 21:24:58 | INFO | app | log_response | ← GET /users/ [500] 0.001s
+2025-11-25 21:24:58 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:58 | INFO | app | start_timer | → POST /users/login
+2025-11-25 21:24:58 | INFO | app | log_response | ← POST /users/login [200] 0.000s
+2025-11-25 21:24:58 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:58 | INFO | app | start_timer | → POST /users/login
+2025-11-25 21:24:58 | WARNING | app | login | Login failed: Invalid credentials provided.
+2025-11-25 21:24:58 | INFO | app | log_response | ← POST /users/login [401] 0.001s
+2025-11-25 21:24:58 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:58 | INFO | app | start_timer | → POST /users/login
+2025-11-25 21:24:58 | WARNING | app | login | Login attempt with no JSON data.
+2025-11-25 21:24:58 | INFO | app | log_response | ← POST /users/login [400] 0.000s
+2025-11-25 21:24:58 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:58 | INFO | app | start_timer | → POST /users/login
+2025-11-25 21:24:58 | WARNING | app | login | Login attempt with missing email or password.
+2025-11-25 21:24:58 | INFO | app | log_response | ← POST /users/login [400] 0.001s
+2025-11-25 21:24:58 | INFO | app | start_timer | → POST /users/login
+2025-11-25 21:24:58 | WARNING | app | login | Login attempt with missing email or password.
+2025-11-25 21:24:58 | INFO | app | log_response | ← POST /users/login [400] 0.001s
+2025-11-25 21:24:58 | INFO | app | create_app | Aplicacion Flask inicializada correctamente
+2025-11-25 21:24:58 | INFO | app | start_timer | → POST /users/login
+2025-11-25 21:24:58 | ERROR | app | login | Unexpected error during login: Something went very wrong
+Traceback (most recent call last):
+  File "D:\backup\files\develop\uni\proyecto_redes\backend\app\api\users.py", line 98, in login
+    access_token = login_service.login(email, password)
+  File "C:\Users\ederc\AppData\Local\Programs\Python\Python313\Lib\unittest\mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ederc\AppData\Local\Programs\Python\Python313\Lib\unittest\mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ederc\AppData\Local\Programs\Python\Python313\Lib\unittest\mock.py", line 1228, in _execute_mock_call
+    raise effect
+Exception: Something went very wrong
+2025-11-25 21:24:58 | INFO | app | log_response | ← POST /users/login [500] 0.007s
+2025-11-25 21:24:58 | INFO | app | wrapper | Inicio de tarea: encrypt_data
+2025-11-25 21:24:58 | INFO | app | wrapper | Tarea: encrypt_data completada en: 0.00s
+2025-11-25 21:24:58 | INFO | app | wrapper | Inicio de tarea: encrypt_data
+2025-11-25 21:24:58 | INFO | app | wrapper | Tarea: encrypt_data completada en: 0.00s
+2025-11-25 21:24:58 | INFO | app | wrapper | Inicio de tarea: decrypt_data
+2025-11-25 21:24:58 | INFO | app | wrapper | Tarea: decrypt_data completada en: 0.00s
+2025-11-25 21:24:58 | INFO | app | wrapper | Inicio de tarea: encrypt_data
+2025-11-25 21:24:58 | INFO | app | wrapper | Tarea: encrypt_data completada en: 0.00s
+2025-11-25 21:24:58 | INFO | app | wrapper | Inicio de tarea: decrypt_data
+2025-11-25 21:24:58 | INFO | app | wrapper | Tarea: decrypt_data completada en: 0.00s

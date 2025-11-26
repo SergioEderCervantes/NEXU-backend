@@ -39,6 +39,7 @@ class DbFile(Enum):
     REPUTATION = os.path.join(Config.BASE_PATH, "Reputacion.json.enc")
     REQUESTS = os.path.join(Config.BASE_PATH, "Solicitudes.json.enc")
     TAGS = os.path.join(Config.BASE_PATH, "Tags.json.enc")
+    TEST = os.path.join(Config.BASE_PATH, "Test.json.enc")
 
 
 class BaseEntity(BaseModel):
