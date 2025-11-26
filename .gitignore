@@ -1,4 +1,7 @@
-logs/
+logs/app.log.*
+logs/errors.log.*
+logs/tasks.log.*
+
 seed/*.json
 db/*.enc
 

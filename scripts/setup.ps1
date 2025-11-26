@@ -87,6 +87,7 @@ try {
     Write-Host "`n[FASE 4/5] Ejecutando pruebas unitarias..." -ForegroundColor Yellow
     
     python -m pytest
+
     if ($LASTEXITCODE -ne 0) {
         throw "Las pruebas de Pytest han fallado. Revisa el log para mas detalles."
     }
