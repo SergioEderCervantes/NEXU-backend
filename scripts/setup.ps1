@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # Iniciar transcripcion para logging
-$LogFile = "setup.log"
+$LogFile = "logs/setup.log"
 Start-Transcript -Path $LogFile -Append
 
 # Verificar que el script se ejecuta desde la raiz del proyecto

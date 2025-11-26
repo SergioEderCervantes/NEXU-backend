@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # Iniciar transcripción para logging
-$LogFile = "start_server.log"
+$LogFile = "logs/start_server.log"
 Start-Transcript -Path $LogFile -Append
 
 # Verificar que el script se ejecuta desde la raíz del proyecto
