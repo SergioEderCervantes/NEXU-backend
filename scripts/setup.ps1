@@ -22,7 +22,7 @@ try {
     Write-Host "======================================================"
 
     # --- FASE 1: PREPARACION Y ENTORNO VIRTUAL ---
-    Write-Host "`n[FASE 1/5] Preparando el entorno virtual..." -ForegroundColor Yellow
+    Write-Host "`n[FASE 1/6] Preparando el entorno virtual..." -ForegroundColor Yellow
 
     # 1. Verificar Python
     Write-Host "Verificando instalacion de Python..."
@@ -52,7 +52,7 @@ try {
     Write-Host "Dependencias instaladas correctamente." -ForegroundColor Green
 
     # --- FASE 2: GENERACION DE CLAVE Y CONFIGURACION DEL .env ---
-    Write-Host "`n[FASE 2/5] Configurando el archivo de entorno..." -ForegroundColor Yellow
+    Write-Host "`n[FASE 2/6] Configurando el archivo de entorno..." -ForegroundColor Yellow
 
     # 1. Generar Clave
     Write-Host "Generando nueva clave de encriptacion..."
@@ -78,13 +78,21 @@ try {
     Read-Host -Prompt "Presiona Enter cuando hayas guardado el archivo '.env' para continuar..."
 
     # --- FASE 3: CREACION DE LA BASE DE DATOS INICIAL ---
-    Write-Host "`n[FASE 3/5] Inicializando la base de datos..." -ForegroundColor Yellow
+    Write-Host "`n[FASE 3/6] Inicializando la base de datos..." -ForegroundColor Yellow
     
     python -m seed.setup_data
     Write-Host "Base de datos inicializada correctamente." -ForegroundColor Green
 
-    # --- FASE 4: VERIFICACION Y PRUEBAS ---
-    Write-Host "`n[FASE 4/5] Ejecutando pruebas unitarias..." -ForegroundColor Yellow
+    # --- FASE 4: CREACION DE ARCHIVOS DE LOG ---
+    Write-Host "`n[FASE 4/6] Creando archivos de log..." -ForegroundColor Yellow
+    New-Item -ItemType Directory -Path "logs" -ErrorAction SilentlyContinue | Out-Null
+    New-Item -ItemType File -Path "logs/app.log" -ErrorAction SilentlyContinue | Out-Null
+    New-Item -ItemType File -Path "logs/errors.log" -ErrorAction SilentlyContinue | Out-Null
+    New-Item -ItemType File -Path "logs/tasks.log" -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "Archivos de log creados." -ForegroundColor Green
+
+    # --- FASE 5: VERIFICACION Y PRUEBAS ---
+    Write-Host "`n[FASE 5/6] Ejecutando pruebas unitarias..." -ForegroundColor Yellow
     
     python -m pytest
 
@@ -93,8 +101,8 @@ try {
     }
     Write-Host "Todas las pruebas pasaron exitosamente." -ForegroundColor Green
 
-    # --- FASE 5: EJECUCION DE LA APLICACION ---
-    Write-Host "`n[FASE 5/5] ¡Configuracion completada!" -ForegroundColor Cyan
+    # --- FASE 6: EJECUCION DE LA APLICACION ---
+    Write-Host "`n[FASE 6/6] ¡Configuracion completada!" -ForegroundColor Cyan
     Write-Host "Todo esta listo para empezar a desarrollar."
     Write-Host "Para iniciar el servidor, puedes ejecutar el script 'start_server.ps1' o el comando 'python -m app.main'."
     Write-Host "Servidor disponible en: http://127.0.0.1:5000" -ForegroundColor White
