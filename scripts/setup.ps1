@@ -79,7 +79,7 @@ try {
 
     # --- FASE 3: CREACION DE LA BASE DE DATOS INICIAL ---
     Write-Host "`n[FASE 3/6] Inicializando la base de datos..." -ForegroundColor Yellow
-    
+    New-Item -ItemType Directory -Path "db" -ErrorAction SilentlyContinue | Out-Null
     python -m seed.setup_data
     Write-Host "Base de datos inicializada correctamente." -ForegroundColor Green
 
