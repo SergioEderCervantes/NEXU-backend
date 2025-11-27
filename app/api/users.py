@@ -47,6 +47,7 @@ def get_current_user():
 @users_bp.route("/offline", methods=["post"])
 @token_required
 def offline():
+    # TODO: Este offline no es del todo confiable, es mejor cuando implemente lo de sockets manejar el cambio de estado ahi mismo
     """
     Endpoint designed to set offline to a user
     """
@@ -59,6 +60,7 @@ def offline():
 @users_bp.route("/online", methods=["POST"])
 @token_required
 def online():
+    # TODO: igual que el online, cuando este el socket, este mismo puede intentar conectarse, y el mismo puede validar el token 
     """
     Endpoint designed to set online to a user
     """
