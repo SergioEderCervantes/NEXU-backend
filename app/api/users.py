@@ -44,6 +44,31 @@ def get_current_user():
     current_user = g.current_user
     return jsonify(current_user.model_dump(exclude={'password'})), 200
 
+@users_bp.route("/offline", methods=["post"])
+@token_required
+def offline():
+    """
+    Endpoint designed to set offline to a user
+    """
+    current_user = g.current_user
+    login_service.set_user_status(current_user, False)
+    
+    return jsonify({"message": "User setted offline"}), 200
+
+
+@users_bp.route("/online", methods=["POST"])
+@token_required
+def online():
+    """
+    Endpoint designed to set online to a user
+    """
+    current_user = g.current_user
+    login_service.set_user_status(current_user, True)
+
+    return jsonify({"message": "User setted online"}), 200
+    
+    
+
 
 @users_bp.route("/signup", methods=["POST"])
 def signup():
@@ -103,3 +128,6 @@ def login():
     except Exception as e:
         logger.error(f"Unexpected error during login: {e}", exc_info=True)
         return jsonify({"error": "Ocurrió un error inesperado al iniciar sesión."}), 500
+
+
+

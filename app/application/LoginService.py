@@ -68,6 +68,9 @@ class LoginService:
             logger.warning(f"Login failed for user '{email}': incorrect password.")
             raise InvalidCredentialsException()
 
+        # Setting user status as active
+        self.set_user_status(user, True)
+        
         logger.info(f"User '{email}' logged in successfully.")
         
         # Generate and return the token
@@ -100,6 +103,12 @@ class LoginService:
 
         raw_user_data['is_active'] = True
         return raw_user_data
+    
+    def set_user_status(self, user:User, is_active: bool) -> None:
+        logger.info(f"Setting user with id: {user.id} status is_active to: {False}")
+        user.is_active = is_active
+        
+        self.user_repository.update(user)        
 
 # Initialize dependencies for the LoginService
 file_manager = FileManager()
