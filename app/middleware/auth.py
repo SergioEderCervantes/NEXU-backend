@@ -60,55 +60,56 @@ def token_required(f):
     return decorated_function
 
 
-def get_user_from_socket_header():
+def socket_token_required(f):
     """
-    Authenticates a user from the socket connection headers.
-    Returns the user object on success, None on failure.
+    Decorator that authenticates a user from the socket connection headers
+    and passes the user object to the decorated function.
     """
-    try:
-        logger.info("Iniciando validación de token para WebSocket desde headers")
-        token = None
-        # During a Socket.IO connection, headers are in the WSGI environ dictionary
-        if 'HTTP_AUTHORIZATION' in request.environ:
-            auth_header = request.environ['HTTP_AUTHORIZATION']
-            if auth_header.startswith('Bearer '):
-                token = auth_header.split(' ')[1]
-        else:
-            logger.debug(f"Asi se ve el request: {request}")
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            logger.info("Iniciando validación de token para WebSocket desde headers")
+            token = None
+            # During a Socket.IO connection, headers are in the WSGI environ dictionary
+            if 'HTTP_AUTHORIZATION' in request.environ:
+                auth_header = request.environ['HTTP_AUTHORIZATION']
+                if auth_header.startswith('Bearer '):
+                    token = auth_header.split(' ')[1]
+            else:
+                logger.debug(f"Asi se ve el request: {request}")
 
-        if not token:
-            logger.warning("Token de WebSocket no encontrado en los headers (Authorization: Bearer ...)")
-            return None
+            if not token:
+                logger.warning("Token de WebSocket no encontrado en los headers (Authorization: Bearer ...)")
+                disconnect()
+                return
 
-        logger.info("Decodificando el JWT del WebSocket")
-        payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])  # type: ignore
-        user_id = int(payload["sub"])
-        logger.info(f"JWT decodificado, id del user: {user_id}")
+            logger.info("Decodificando el JWT del WebSocket")
+            payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])  # type: ignore
+            user_id = int(payload["sub"])
+            logger.info(f"JWT decodificado, id del user: {user_id}")
 
-        file_manager = FileManager()
-        encryption_manager = EncryptionManager()
-        user_repository = UserRepository(file_manager, encryption_manager)
+            file_manager = FileManager()
+            encryption_manager = EncryptionManager()
+            user_repository = UserRepository(file_manager, encryption_manager)
 
-        current_user = user_repository.find_by_id(user_id)
-        if not current_user:
-            logger.warning(f"Usuario no encontrado: {user_id}")
-            return None
+            current_user = user_repository.find_by_id(user_id)
+            if not current_user:
+                logger.warning(f"Usuario no encontrado: {user_id}")
+                disconnect()
+                return
 
-        return current_user
+            return f(current_user, *args, **kwargs)
 
-    except jwt.ExpiredSignatureError:
-        logger.warning("Token del WebSocket ha expirado")
-        disconnect()
-        return None
-    except jwt.InvalidTokenError as e:
-        logger.warning(f"Token del WebSocket es inválido: {e}")
-        disconnect()
-        return None
-    except KeyError:
-        logger.warning("Header 'Authorization' no encontrado para la conexión WebSocket.")
-        disconnect()
-        return None
-    except Exception as e:
-        logger.warning(f"Error inesperado durante validación de WebSocket: {str(e)}")
-        disconnect() 
-        return None
+        except jwt.ExpiredSignatureError:
+            logger.warning("Token del WebSocket ha expirado")
+            disconnect()
+        except jwt.InvalidTokenError as e:
+            logger.warning(f"Token del WebSocket es inválido: {e}")
+            disconnect()
+        except KeyError:
+            logger.warning("Header 'Authorization' no encontrado para la conexión WebSocket.")
+            disconnect()
+        except Exception as e:
+            logger.warning(f"Error inesperado durante validación de WebSocket: {str(e)}")
+            disconnect()
+    return decorated_function
