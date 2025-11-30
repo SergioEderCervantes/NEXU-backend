@@ -19,13 +19,6 @@ class UserService:
         users = self.user_repository.find_all()
         return users
     
-    def get_user_by_id(self, user_id: int) -> User | None:
-        """
-        Retrieves a user by their ID.
-        """
-        logger.info(f"Retrieving user with ID: {user_id}")
-        user = self.user_repository.find_by_id(user_id)
-        return user
 
     def set_user_status(self, user_id: int, is_active: bool) -> None:
         """

@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field, model_validator
 from typing import Any, Optional
 from app.config.settings import Config
 from app.utils.hashing import hash_password
+from datetime import datetime
 
 
 class DbFile(Enum):
@@ -43,3 +44,15 @@ class User(BaseEntity):
                 data['password'] = hash_password(password)
         return data
 
+
+class Chat(BaseEntity):
+    user_a: int
+    user_b: int
+    last_message_at: datetime = Field(default_factory=datetime.now)
+    
+class Message(BaseEntity):
+    conversation_id: int
+    sender_id: int
+    content: str
+    timestamp: datetime = Field(default_factory=datetime.now)
+    delivered: bool

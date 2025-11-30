@@ -23,6 +23,7 @@ def on_connect(user:User, auth):
     user_service.set_user_status(user.id, True)
     # Notifing a successful connection:
     send("Connected to server successfully")
+    # TODO: aqui se debe de hacer un query para ver si tiene nuevos mensajes, si si, mandarselos
 
 
 
@@ -40,5 +41,6 @@ def on_disconnect(user:User):
     
 @socketio.event
 def start_chat(data):
-   logger.debug(f"Si llegó el mensaje: {data["msg"]}")   
+   logger.debug(f"Si llegó el mensaje: {data["msg"]}")
+   
    send("Mensaje recibido en el servidor")
