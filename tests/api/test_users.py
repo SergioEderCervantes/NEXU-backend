@@ -20,8 +20,8 @@ def client():
 def sample_users():
     """Return a list of sample User objects for mocking."""
     return [
-        User(id=1, name="Admin User", email="admin@example.com", password="password123", is_active=True, gender="other"),
-        User(id=2, name="Normal User", email="user@example.com", password="password456", is_active=True, gender="female"),
+        User(id="1", name="Admin User", email="admin@example.com", password="password123", is_active=True, gender="other"),
+        User(id="2", name="Normal User", email="user@example.com", password="password456", is_active=True, gender="female"),
     ]
 
 # --- Tests for GET /users ---

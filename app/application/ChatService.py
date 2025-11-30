@@ -1,11 +1,11 @@
 from app.repository.user_repository import UserRepository
-from app.domain.entities import User, Chat, Message
+
 
 class ChatService:
     def __init__(self, userRepository: UserRepository) -> None:
         self.user_repository = userRepository
         
-    def start_chat(self, user_a_id: int, user_b_id:int, content:str):
+    def start_chat(self, user_a_id: str, user_b_id:str, content:str):
         user_a = self.user_repository.find_by_id(user_a_id)
         user_b = self.user_repository.find_by_id(user_b_id)
         if not user_b or not user_a:

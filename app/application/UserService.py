@@ -20,7 +20,7 @@ class UserService:
         return users
     
 
-    def set_user_status(self, user_id: int, is_active: bool) -> None:
+    def set_user_status(self, user_id: str, is_active: bool) -> None:
         """
         Sets the user's status to active or inactive.
         """

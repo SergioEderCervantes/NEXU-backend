@@ -20,7 +20,7 @@ class LoginService:
         self.user_repository = user_repository
         self.user_service = user_service
 
-    def _create_access_token(self, user_id: int) -> str:
+    def _create_access_token(self, user_id: str) -> str:
         """
         Generates a new JWT access token.
         """
@@ -87,7 +87,7 @@ class LoginService:
             try:
                 email_prefix = email.split('@')[0]
                 identifier = email_prefix.removeprefix('al')
-                raw_user_data['id'] = int(identifier)
+                raw_user_data['id'] = identifier
             except (ValueError, TypeError) as e:
                 logger.error(f"Failed to extract user ID from email '{email}': {e}")
                 raise ValueError("Could not determine user ID from email format.")

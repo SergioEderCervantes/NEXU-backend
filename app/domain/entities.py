@@ -17,7 +17,7 @@ class DbFile(Enum):
 
 
 class BaseEntity(BaseModel):
-    id: int = Field(..., gt=0)
+    id: str = Field(...)
 
 
 class User(BaseEntity):

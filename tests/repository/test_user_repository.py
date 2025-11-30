@@ -27,7 +27,7 @@ def sample_users_data():
     return {
         "users": [
             {
-                "id": 1,
+                "id": "1",
                 "name": "Test User One",
                 "email": "test1@example.com",
                 "password": "hashed_password1",
@@ -37,7 +37,7 @@ def sample_users_data():
                 "reputation": 10,
             },
             {
-                "id": 2,
+                "id": "2",
                 "name": "Test User Two",
                 "email": "test2@example.com",
                 "password": "hashed_password2",
@@ -68,7 +68,7 @@ def test_find_all(user_repository, mock_file_manager, mock_encryption_manager, s
     
     assert len(users) == 2
     assert isinstance(users[0], User)
-    assert users[0].id == 1
+    assert users[0].id == "1"
     assert users[1].name == "Test User Two"
     mock_file_manager.read_file.assert_called_once_with(DbFile.USERS)
     mock_encryption_manager.decrypt_data.assert_called_once_with(b'encrypted_data_mock')
@@ -77,18 +77,18 @@ def test_find_by_id(user_repository, mock_file_manager, mock_encryption_manager,
     """Test finding a user by ID."""
     setup_mocks(mock_file_manager, mock_encryption_manager, sample_users_data)
     
-    user = user_repository.find_by_id(2)
+    user = user_repository.find_by_id("2")
     
     assert user is not None
     assert isinstance(user, User)
-    assert user.id == 2
+    assert user.id == "2"
     assert user.name == "Test User Two"
 
 def test_find_by_id_not_found(user_repository, mock_file_manager, mock_encryption_manager, sample_users_data):
     """Test that finding a non-existent user by ID returns None."""
     setup_mocks(mock_file_manager, mock_encryption_manager, sample_users_data)
     
-    user = user_repository.find_by_id(99)
+    user = user_repository.find_by_id("99")
     
     assert user is None
 
@@ -99,14 +99,14 @@ def test_find_by_email(user_repository, mock_file_manager, mock_encryption_manag
     user = user_repository.find_by_email("test1@example.com")
     
     assert user is not None
-    assert user.id == 1
+    assert user.id == "1"
 
 def test_add_user(user_repository, mock_file_manager, mock_encryption_manager, sample_users_data):
     """Test adding a new user."""
     setup_mocks(mock_file_manager, mock_encryption_manager, sample_users_data)
     
     new_user = User(
-        id=3,
+        id="3",
         name="New User",
         email="new@example.com",
         password="new_password", # Will be hashed by Pydantic model
@@ -125,7 +125,7 @@ def test_add_user(user_repository, mock_file_manager, mock_encryption_manager, s
     encrypted_payload_dict = json.loads(encrypted_payload_str)
     
     assert len(encrypted_payload_dict["users"]) == 3
-    assert encrypted_payload_dict["users"][-1]["id"] == 3
+    assert encrypted_payload_dict["users"][-1]["id"] == "3"
     assert encrypted_payload_dict["users"][-1]["name"] == "New User"
 
 def test_update_user(user_repository, mock_file_manager, mock_encryption_manager, sample_users_data):
@@ -133,7 +133,7 @@ def test_update_user(user_repository, mock_file_manager, mock_encryption_manager
     setup_mocks(mock_file_manager, mock_encryption_manager, sample_users_data)
     
     updated_user = User(
-        id=1,
+        id="1",
         name="Updated Name",
         email="test1@example.com",
         password="hashed_password1",
@@ -158,7 +158,7 @@ def test_delete_user(user_repository, mock_file_manager, mock_encryption_manager
     """Test deleting a user."""
     setup_mocks(mock_file_manager, mock_encryption_manager, sample_users_data)
     
-    result = user_repository.delete(1)
+    result = user_repository.delete("1")
     
     assert result is True
     
@@ -166,4 +166,4 @@ def test_delete_user(user_repository, mock_file_manager, mock_encryption_manager
     encrypted_payload_dict = json.loads(args[0])
     
     assert len(encrypted_payload_dict["users"]) == 1
-    assert encrypted_payload_dict["users"][0]["id"] == 2
+    assert encrypted_payload_dict["users"][0]["id"] == "2"

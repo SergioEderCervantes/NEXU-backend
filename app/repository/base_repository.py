@@ -100,7 +100,7 @@ class BaseRepository(ABC, Generic[T]):
             return self._to_entity(matches[0].value)
         return None
 
-    def find_by_id(self, entity_id: int) -> Optional[T]:
+    def find_by_id(self, entity_id: str) -> Optional[T]:
         """
         Finds an entity by its unique ID.
 
@@ -144,7 +144,7 @@ class BaseRepository(ABC, Generic[T]):
             return entity
         return None
 
-    def delete(self, entity_id: int) -> bool:
+    def delete(self, entity_id: str) -> bool:
         """
         Deletes an entity from the repository by its ID.
 
