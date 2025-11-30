@@ -1,7 +1,6 @@
 import logging
 import jwt
 from datetime import datetime, timedelta
-import uuid # New import
 from app.infraestructure.encription_service import EncryptionManager
 from app.infraestructure.file_service import FileManager
 from app.repository.user_repository import UserRepository
