@@ -14,7 +14,7 @@ El sistema implementa una arquitectura por capas, con separación clara entre re
 
 ---
 
-##  Estructura del proyecto
+## Estructura del proyecto
 
 ```
 backend/
@@ -22,27 +22,29 @@ backend/
 ├── app/
 │   ├── api/                     # Capa de presentación (HTTP / REST)
 │   │   ├── __init__.py          # Registro global de Blueprints
-│   │   ├── user.py       # Endpoints relacionados a usuarios
-│   │   ├── chat.py       # Endpoints relacionados al chat
-│   │   └── system.py     # Otros endpoints del sistema
+│   │   └── user.py              # Endpoints relacionados a usuarios
+│   │
+│   ├── application/             # Capa de lógica de negocio (Servicios)
+│   │   ├── __init__.py
+│   │   ├── LoginService.py      # Lógica de autenticación y registro
+│   │   └── UserService.py       # Lógica de gestión de usuarios
 │   │
 │   ├── repositories/            # Capa de acceso a datos (Repository Pattern)
 │   │   ├── __init__.py
 │   │   └── user_repository.py   # Lógica de lectura/escritura sobre JSON
 │   │
-│   ├── infraestructure/         # Capa de Servicios para la lectura de los archivos dek nfs
+│   ├── infraestructure/         # Capa de servicios de bajo nivel
 │   │   ├── __init__.py
 │   │   └── encryption_service.py # Encriptación y desencriptación de archivos
 │   │
 │   ├── config/                  # Núcleo de la aplicación
 │   │   ├── __init__.py
 │   │   ├── logger.py            # Logger central + decoradores de medición
-│   │   ├── config.py            # Configuraciones globales
-│   │   └── scheduler.py         # Registro y control de tareas programadas
+│   │   └── config.py            # Configuraciones globales
 │   │
 │   ├── sockets/                 # Capa de comunicación en tiempo real
 │   │   ├── __init__.py          # Inicializa Flask-SocketIO
-│   │   └── chat_socket.py       # Manejadores de eventos (mensajes, conexión)
+│   │   └── chat.py              # Manejadores de eventos (mensajes, conexión)
 │   │
 │   ├── main.py                  # Punto de entrada principal del servidor Flask
 │   └── wsgi.py                  # Entrada para servidores WSGI (gunicorn)
@@ -60,15 +62,16 @@ backend/
 
 ## 🧱 Comportamiento de las capas
 
-| Capa                                   | Responsabilidad                                                                                                                | Comunicación con        |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| **API** (`/app/api`)                   | Define los endpoints REST que consumen el frontend o móvil. Valida requests y delega la lógica a los repositorios o servicios. | Domain / Repositories |
-| **Sockets** (`/app/sockets`)           | Maneja la comunicación en tiempo real (chat, notificaciones, etc.) vía WebSockets.                                             | Domain / Repositories                 |
-| **Repositories** (`/app/repositories`) | Implementan el patrón **Repository**. Acceden, consultan y manipulan los JSON desencriptados.                                  | Infraestructure / API          |
-| **Infraestructure** (`/app/Infraestructure`)         | Capa encargada del manejo a bajo nivel de la persistencia de los datos json (lectura del de archivos desde el NFS y encriptacion/desencriptacion)| Repositories            |
-| **config** (`/app/config`)                 | Configuración, logging, scheduling y utilidades comunes.                                                                       | Todas las capas         |
-| **Domain** (`app/domain`)| Define todo lo relacionado en el dominio de la aplicacion, desde objetos de dominio, hasta logica especial | Todas las capas |
-| **Data (NFS)** (`/db`)               | Capa física de persistencia. Contiene los JSON cifrados que representan la “base de datos”.                                    | Infraestructure            |
+| Capa | Responsabilidad | Comunicación con |
+| :--- | :--- | :--- |
+| **API** (`/app/api`) | Define los endpoints REST. Valida requests y delega la lógica de negocio a la capa de aplicación. | Application / Domain |
+| **Sockets** (`/app/sockets`) | Maneja la comunicación en tiempo real (WebSockets). Delega la lógica a la capa de aplicación. | Application / Domain |
+| **Application** (`/app/application`) | Contiene la lógica de negocio central. Orquesta las operaciones entre repositorios y otros servicios. | Repositories / Domain |
+| **Repositories** (`/app/repositories`) | Implementan el patrón **Repository**. Abstraen el origen de datos y exponen métodos para acceder y manipularlos. | Infrastructure / Domain |
+| **Infrastructure** (`/app/infraestructure`) | Maneja operaciones de bajo nivel como la manipulación de archivos (NFS) y la encriptación/desencriptación. | - |
+| **Domain** (`app/domain`) | Define las entidades, excepciones y lógica de dominio de la aplicación. | Todas las capas |
+| **Config** (`/app/config`) | Configuración, logging, scheduling y utilidades comunes. | Todas las capas |
+| **Data (NFS)** (`/db`) | Capa física de persistencia. Contiene los JSON cifrados. | Infrastructure |
 
 ---
 
@@ -81,10 +84,13 @@ Frontend / App Móvil
    [ Flask API ]  ←→  [ Flask-SocketIO (WebSockets) ]
         │
         ▼
+   [ Application Layer (Services) ]
+        │
+        ▼
    [ Repository Pattern ]
         │
         ▼
- [ Encriptación / Desencriptación ]
+ [ Encryption / Decryption ]
         │
         ▼
  [ Archivos JSON en cliente NFS ]

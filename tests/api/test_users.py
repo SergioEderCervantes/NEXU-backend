@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from app.main import create_app
 from app.domain.entities import User
 from app.domain.exceptions import InvalidCredentialsException
@@ -28,13 +28,13 @@ def sample_users():
 
 @patch('app.middleware.auth.UserRepository')
 @patch('app.middleware.auth.jwt.decode')
-@patch('app.api.users.login_service')
-def test_get_all_users_success(mock_login_service, mock_jwt_decode, mock_user_repo, client, sample_users):
+@patch('app.api.users.user_service')
+def test_get_all_users_success(mock_user_service, mock_jwt_decode, mock_user_repo, client, sample_users):
     """Test GET /users returns a list of users successfully."""
     # Arrange
     mock_jwt_decode.return_value = {'sub': '1'}
     mock_user_repo.return_value.find_by_id.return_value = sample_users[0]
-    mock_login_service.get_all_users.return_value = sample_users
+    mock_user_service.get_all_users.return_value = sample_users
     
     # Act
     response = client.get('/users/', headers={'Authorization': 'Bearer fake_token'})
@@ -46,17 +46,17 @@ def test_get_all_users_success(mock_login_service, mock_jwt_decode, mock_user_re
     assert json_data[0]['email'] == "admin@example.com"
     assert 'password' not in json_data[0]
     assert json_data[1]['name'] == "Normal User"
-    mock_login_service.get_all_users.assert_called_once()
+    mock_user_service.get_all_users.assert_called_once()
 
 @patch('app.middleware.auth.UserRepository')
 @patch('app.middleware.auth.jwt.decode')
-@patch('app.api.users.login_service')
-def test_get_all_users_empty(mock_login_service, mock_jwt_decode, mock_user_repo, client, sample_users):
+@patch('app.api.users.user_service')
+def test_get_all_users_empty(mock_user_service, mock_jwt_decode, mock_user_repo, client, sample_users):
     """Test GET /users returns an empty list when no users exist."""
     # Arrange
     mock_jwt_decode.return_value = {'sub': '1'}
     mock_user_repo.return_value.find_by_id.return_value = sample_users[0]
-    mock_login_service.get_all_users.return_value = []
+    mock_user_service.get_all_users.return_value = []
     
     # Act
     response = client.get('/users/', headers={'Authorization': 'Bearer fake_token'})
@@ -64,17 +64,17 @@ def test_get_all_users_empty(mock_login_service, mock_jwt_decode, mock_user_repo
     # Assert
     assert response.status_code == 200
     assert response.get_json() == []
-    mock_login_service.get_all_users.assert_called_once()
+    mock_user_service.get_all_users.assert_called_once()
 
 @patch('app.middleware.auth.UserRepository')
 @patch('app.middleware.auth.jwt.decode')
-@patch('app.api.users.login_service')
-def test_get_all_users_repository_error(mock_login_service, mock_jwt_decode, mock_user_repo, client, sample_users):
+@patch('app.api.users.user_service')
+def test_get_all_users_repository_error(mock_user_service, mock_jwt_decode, mock_user_repo, client, sample_users):
     """Test GET /users handles unexpected errors gracefully."""
     # Arrange
     mock_jwt_decode.return_value = {'sub': '1'}
     mock_user_repo.return_value.find_by_id.return_value = sample_users[0]
-    mock_login_service.get_all_users.side_effect = Exception("Database error")
+    mock_user_service.get_all_users.side_effect = Exception("Database error")
     
     # Act
     response = client.get('/users/', headers={'Authorization': 'Bearer fake_token'})
@@ -82,7 +82,7 @@ def test_get_all_users_repository_error(mock_login_service, mock_jwt_decode, moc
     # Assert
     assert response.status_code == 500
     assert response.get_json() == {"error": "Ocurrió un error inesperado al obtener usuarios."}
-    mock_login_service.get_all_users.assert_called_once()
+    mock_user_service.get_all_users.assert_called_once()
 
 
 # --- Tests for POST /users/login ---

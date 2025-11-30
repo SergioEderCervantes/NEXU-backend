@@ -1,22 +1,24 @@
 import logging
 import jwt
 from datetime import datetime, timedelta
-from typing import List
 from app.infraestructure.encription_service import EncryptionManager
 from app.infraestructure.file_service import FileManager
 from app.repository.user_repository import UserRepository
-from app.domain.entities import User, verify_password
+from app.domain.entities import User
+from app.utils.hashing import verify_password
 from app.domain.exceptions import (
     UserAlreadyExistsException,
     InvalidCredentialsException,
 )
 from app.config.settings import Config
+from app.application.UserService import user_service, UserService
 
 logger = logging.getLogger('app')
 
 class LoginService:
-    def __init__(self, user_repository: UserRepository):
+    def __init__(self, user_repository: UserRepository, user_service: UserService):
         self.user_repository = user_repository
+        self.user_service = user_service
 
     def _create_access_token(self, user_id: int) -> str:
         """
@@ -69,20 +71,12 @@ class LoginService:
             raise InvalidCredentialsException()
 
         # Setting user status as active
-        self.set_user_status(user, True)
+        self.user_service.set_user_status(user.id, True)
         
         logger.info(f"User '{email}' logged in successfully.")
         
         # Generate and return the token
         return self._create_access_token(user_id=user.id)
-
-    def get_all_users(self) -> List[User]:
-        """
-        Retrieves all users from the repository.
-        """
-        logger.info("Retrieving all users from the repository.")
-        users = self.user_repository.find_all()
-        return users
 
     def _fill_user_data(self, raw_user_data: dict) -> dict:
         """
@@ -103,15 +97,9 @@ class LoginService:
 
         raw_user_data['is_active'] = True
         return raw_user_data
-    
-    def set_user_status(self, user:User, is_active: bool) -> None:
-        logger.info(f"Setting user with id: {user.id} status is_active to: {False}")
-        user.is_active = is_active
-        
-        self.user_repository.update(user)        
 
 # Initialize dependencies for the LoginService
 file_manager = FileManager()
 encryption_manager = EncryptionManager()
 user_repository = UserRepository(file_manager, encryption_manager)
-login_service = LoginService(user_repository)
+login_service = LoginService(user_repository, user_service)

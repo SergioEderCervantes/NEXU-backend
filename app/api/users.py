@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, g
 import logging
 from pydantic import ValidationError
 from app.application.LoginService import login_service
+from app.application.UserService import user_service
 from app.domain.exceptions import (
     UserAlreadyExistsException,
     InvalidCredentialsException,
@@ -24,7 +25,7 @@ def get_all_users():
         # The `current_user` is attached to `g` by the `@token_required` decorator.
         # We can add logic here, e.g., to check if g.current_user is an admin.
         # For now, we just proceed.
-        users = login_service.get_all_users()
+        users = user_service.get_all_users()
         users_dict = [user.model_dump(exclude={'password'}) for user in users]
         return jsonify(users_dict), 200
     except Exception as e:
