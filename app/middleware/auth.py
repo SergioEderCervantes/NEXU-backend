@@ -31,7 +31,7 @@ def token_required(f):
             payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM]) # type: ignore
             user_id = payload['sub']
             logger.info(f"JWT decodificado, id del user: {user_id}")
-            user_id = int(user_id)
+            # user_id = int(user_id) # Removed int cast
 
             # This is not ideal as it creates a new instance every time.
             # In a real app, you would use a dependency injection system (like Flask-Injector)
@@ -86,7 +86,7 @@ def socket_token_required(f):
                 return
 
             payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])  # type: ignore
-            user_id = int(payload["sub"])
+            user_id = payload["sub"]
             logger.info(f"JWT decodificado, id del user: {user_id}")
 
             file_manager = FileManager()

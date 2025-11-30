@@ -18,13 +18,22 @@ class DbFile(Enum):
 
 class BaseEntity(BaseModel):
     id: str = Field(default="")
+    @model_validator(mode='before')
+    @classmethod
+    def create_id(cls, data:Any) -> Any:
+        """
+        Crea el id unico con uuid v4 en caso de que se llegue sin id, que va a ser casi siempre
+        """
+        if isinstance(data, dict) and 'id' not in data:
+            data['id'] = str(uuid.uuid4())
+        return data    
 
 
 class User(BaseEntity):
     name: str
     email: str
     password: str
-    is_active: bool
+    is_active: bool = True
     gender: str
     bio: Optional[str] = None
     reputation: int = 0
@@ -49,16 +58,7 @@ class Chat(BaseEntity):
     user_a: str
     user_b: str
     last_message_at: datetime = Field(default_factory=datetime.now)
-    
-    @model_validator(mode='before')
-    @classmethod
-    def create_uuid(cls, data:Any) -> Any:
-        """
-        Crea el id unico con uuid v4 en caso de que se llegue sin id, que va a ser casi siempre
-        """
-        if isinstance(data, dict) and 'id' not in data:
-            data['id'] = str(uuid.uuid4())
-        return data
+
 
     
 class Message(BaseEntity):
@@ -67,12 +67,3 @@ class Message(BaseEntity):
     content: str
     timestamp: datetime = Field(default_factory=datetime.now)
     delivered: bool
-    @model_validator(mode='before')
-    @classmethod
-    def create_uuid(cls, data:Any) -> Any:
-        """
-        Crea el id unico con uuid v4 en caso de que se llegue sin id, que va a ser casi siempre
-        """
-        if isinstance(data, dict) and 'id' not in data:
-            data['id'] = str(uuid.uuid4())
-        return data

@@ -1,6 +1,7 @@
 import logging
 import jwt
 from datetime import datetime, timedelta
+import uuid # New import
 from app.infraestructure.encription_service import EncryptionManager
 from app.infraestructure.file_service import FileManager
 from app.repository.user_repository import UserRepository
@@ -46,8 +47,7 @@ class LoginService:
             logger.warning(f"Signup failed: user with email '{email}' already exists.")
             raise UserAlreadyExistsException()
 
-        filled_data = self._fill_user_data(raw_user_data)
-        new_user = User(**filled_data)
+        new_user = User(**raw_user_data)
         
         self.user_repository.add(new_user)
         logger.info(f"Successfully registered user with ID: {new_user.id}, email: {new_user.email}")
@@ -78,26 +78,7 @@ class LoginService:
         # Generate and return the token
         return self._create_access_token(user_id=user.id)
 
-    # TODO: maybe pasarlo a un model validator de pydantic cuando se inicialice la instancia
-    def _fill_user_data(self, raw_user_data: dict) -> dict:
-        """
-        Fills in system-managed user data like ID from email prefix and active status.
-        """
-        email = raw_user_data.get('email')
-        if email:
-            try:
-                email_prefix = email.split('@')[0]
-                identifier = email_prefix.removeprefix('al')
-                raw_user_data['id'] = identifier
-            except (ValueError, TypeError) as e:
-                logger.error(f"Failed to extract user ID from email '{email}': {e}")
-                raise ValueError("Could not determine user ID from email format.")
-        else:
-            logger.warning("Attempted to fill user data without an email field.")
-            raise ValueError("Email is required for ID generation.")
 
-        raw_user_data['is_active'] = True
-        return raw_user_data
 
 # Initialize dependencies for the LoginService
 file_manager = FileManager()
