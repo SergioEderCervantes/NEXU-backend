@@ -43,13 +43,22 @@ def sample_chats_data():
         ]
     }
 
+@pytest.fixture
+def sample_chat_for_user_lookup():
+    """A specific chat for testing find_chat_by_users."""
+    user_id_1 = "user-sorted-first-id"
+    user_id_2 = "user-sorted-second-id"
+    chat = Chat(user_a=user_id_1, user_b=user_id_2)
+    return {
+        "user_id_1": user_id_1,
+        "user_id_2": user_id_2,
+        "chat": chat,
+        "data": {"chats": [chat.model_dump(mode='json')]}
+    }
+
+
 def setup_mocks(mock_file_manager, mock_encryption_manager, data):
     """Helper to configure mocks for reading data."""
-    # The data saved in the file is a dictionary, so we dump it to a JSON string.
-    # The model_dump() method from pydantic is used for this.
-    # We need to make sure the data is in the correct format.
-    # In the repository, the data is dumped using model_dump, so we don't need to do it here.
-    # Just make sure the datetime is in isoformat.
     json_data = json.dumps(data, indent=4)
     encrypted_data = b'encrypted_data_mock'
     
@@ -95,7 +104,6 @@ def test_add_chat(chat_repository, mock_file_manager, mock_encryption_manager, s
     setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
     
     new_chat = Chat(
-        id=str(uuid.uuid4()),
         user_a=str(uuid.uuid4()),
         user_b=str(uuid.uuid4())
     )
@@ -117,13 +125,12 @@ def test_update_chat(chat_repository, mock_file_manager, mock_encryption_manager
     setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
     
     chat_to_update = sample_chats_data["chats"][0]
-    updated_chat = Chat(
-        id=chat_to_update["id"],
-        user_a=chat_to_update["user_a"],
-        user_b=str(uuid.uuid4()), # updated user_b
-        last_message_at=datetime.fromisoformat(chat_to_update["last_message_at"])
-    )
-    
+    # Recreate the chat object from dict to ensure types are correct
+    original_chat_obj = Chat(**chat_to_update)
+
+    # Now create the updated version
+    updated_chat = original_chat_obj.model_copy(update={"user_b": str(uuid.uuid4())})
+
     result = chat_repository.update(updated_chat)
     
     assert result is not None
@@ -148,3 +155,36 @@ def test_delete_chat(chat_repository, mock_file_manager, mock_encryption_manager
     
     assert len(encrypted_payload_dict["chats"]) == 1
     assert encrypted_payload_dict["chats"][0]["id"] == sample_chats_data["chats"][1]["id"]
+
+def test_find_chat_by_users_success_original_order(chat_repository, mock_file_manager, mock_encryption_manager, sample_chat_for_user_lookup):
+    """Test finding a chat by user IDs when they are provided in the original sorted order."""
+    user_id_1 = sample_chat_for_user_lookup["user_id_1"]
+    user_id_2 = sample_chat_for_user_lookup["user_id_2"]
+    expected_chat = sample_chat_for_user_lookup["chat"]
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chat_for_user_lookup["data"])
+
+    found_chat = chat_repository.find_chat_by_users(user_id_1, user_id_2)
+    assert found_chat is not None
+    assert found_chat.id == expected_chat.id
+    assert found_chat.user_a == expected_chat.user_a
+    assert found_chat.user_b == expected_chat.user_b
+
+def test_find_chat_by_users_success_reversed_order(chat_repository, mock_file_manager, mock_encryption_manager, sample_chat_for_user_lookup):
+    """Test finding a chat by user IDs when they are provided in reversed order."""
+    user_id_1 = sample_chat_for_user_lookup["user_id_1"]
+    user_id_2 = sample_chat_for_user_lookup["user_id_2"]
+    expected_chat = sample_chat_for_user_lookup["chat"]
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chat_for_user_lookup["data"])
+
+    found_chat = chat_repository.find_chat_by_users(user_id_2, user_id_1)
+    assert found_chat is not None
+    assert found_chat.id == expected_chat.id
+    assert found_chat.user_a == expected_chat.user_a
+    assert found_chat.user_b == expected_chat.user_b
+
+def test_find_chat_by_users_not_found(chat_repository, mock_file_manager, mock_encryption_manager, sample_chat_for_user_lookup):
+    """Test that find_chat_by_users returns None if no chat exists for the given user IDs."""
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chat_for_user_lookup["data"])
+
+    not_found_chat = chat_repository.find_chat_by_users("non_existent_user_1", "non_existent_user_2")
+    assert not_found_chat is None

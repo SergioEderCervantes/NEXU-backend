@@ -40,54 +40,95 @@ class ChatService:
         else:
             logger.info("An anonymous user is disconnecting.")
         
+    def get_chats_for_user(self, user_id: str) -> list:
+        """
+        Retrieves all chats for a given user, along with details about the other
+        participant and the number of unread messages.
+        """
+        chats = self.chat_repository.find_all_by_user(user_id)
+        response = []
+
+        for chat in chats:
+            other_user_id = chat.user_b if chat.user_a == user_id else chat.user_a
+            other_user = self.user_repository.find_by_id(other_user_id)
+            
+            if not other_user:
+                logger.warning(f"Could not find other user with id {other_user_id} for chat {chat.id}")
+                continue
+
+            unread_count = self.message_repository.count_unread_by_chat(chat.id, user_id)
+            
+            response.append({
+                "id": chat.id,
+                "last_message_at": chat.last_message_at.isoformat(),
+                "other_user": {
+                    "id": other_user.id,
+                    "name": other_user.name,
+                    "is_active": other_user.is_active
+                },
+                "unread_messages": unread_count
+            })
+            
+        # Sort chats by last message time, newest first
+        response.sort(key=lambda x: x['last_message_at'], reverse=True)
+        
+        return response
+
     def start_chat(self, user_a_id: str, user_b_id:str, first_msg_content:str):
         user_a = self.user_repository.find_by_id(user_a_id)
         user_b = self.user_repository.find_by_id(user_b_id)
-        if not user_b or not user_a:
-            # El usuario b no se encontro
+        if not user_a or not user_b:
+            # One of the users was not found
+            logger.warning(f"Attempted to start chat but user not found. user_a: {user_a_id}, user_b: {user_b_id}")
             return
 
         # Check if a chat already exists between these two users
-        # For now, let's assume it doesn't exist and create a new one.
-        # This part should be more robust in a real application, checking for existing chats
-        # For example, you might want to find_by_attribute('user_a', user_a_id) and ('user_b', user_b_id)
-        # or vice versa. This will require a custom method in ChatRepository or
-        # iterating through all chats.
+        chat = self.chat_repository.find_chat_by_users(user_a_id, user_b_id)
 
-        new_chat = Chat(user_a=user_a_id, user_b=user_b_id)
-        self.chat_repository.add(new_chat) # Save the new chat
-        logger.info(f"New chat {new_chat.id} created between {user_a.id} and {user_b.id}")
-
-        # User A joins the chat room
-        join_room(new_chat.id)
-        logger.info(f"User {user_a.id} joined chat room {new_chat.id}")
-
-        # If user_b is active, join him to the chat
+        if chat:
+            # Chat already exists, join the room and send the message
+            logger.info(f"Joining existing chat {chat.id} between {user_a.id} and {user_b.id}")
+            join_room(chat.id)
+            logger.info(f"User {user_a.id} joined chat room {chat.id}")
             
+            # Send the "first message" as a regular direct message since the chat is already established
+            self.send_dm(user_a_id, chat.id, first_msg_content)
 
-        # Notify User B by emitting to their personal room (user_b.id)
-        # user_b.id is the room name for user B's active connections
-        socketio.emit('chat_invitation', 
-             {'chat_id': new_chat.id, 
-              'from_user_id': user_a.id,
-              'from_user_name': user_a.name,
-              'first_message': first_msg_content},
-             to=user_b.id)
-        logger.info(f"Sent chat invitation to user {user_b.id} for chat {new_chat.id}")
+        else:
+            # Chat does not exist, create a new one
+            new_chat = Chat(user_a=user_a_id, user_b=user_b_id)
+            self.chat_repository.add(new_chat) # Save the new chat
+            chat = new_chat # Use the new chat object from here on
+            logger.info(f"New chat {chat.id} created between {user_a.id} and {user_b.id}")
 
+            # User A joins the new chat room
+            join_room(chat.id)
+            logger.info(f"User {user_a.id} joined chat room {chat.id}")
 
-        # Create and save the first message
-        first_message = Message(
-            conversation_id=new_chat.id,
-            sender_id=user_a.id,
-            content=first_msg_content,
-            timestamp=datetime.now(),
-            delivered=False # Will be delivered when user B joins and confirms receipt
-        )
-        self.message_repository.add(first_message)
-        logger.info(f"First message for chat {new_chat.id} saved.")
+            # Notify User B by emitting to their personal room (user_b.id)
+            socketio.emit('chat_invitation', 
+                {'chat_id': chat.id, 
+                'from_user_id': user_a.id,
+                'from_user_name': user_a.name,
+                'first_message': first_msg_content},
+                to=user_b.id)
+            logger.info(f"Sent chat invitation to user {user_b.id} for chat {chat.id}")
+
+            # Create and save the first message
+            first_message = Message(
+                conversation_id=chat.id,
+                sender_id=user_a.id,
+                content=first_msg_content,
+                timestamp=datetime.now(),
+                delivered=False # Will be delivered when user B joins and confirms receipt
+            )
+            self.message_repository.add(first_message)
+            logger.info(f"First message for chat {chat.id} saved.")
     
     def accept_chat(self, user_id, chat_id):
+        """Esta funcion no es solo cuando la primera vez que se unen al chat, si no cada que el usuario quiera entrar a un chat,
+        en este caso se une a la room del chat, se cargan todos los mensajes del chat y se settea como entregados si hay alguno que todavia este
+        como no entregado"""
         chat = self.chat_repository.find_by_id(chat_id)
 
         if not chat:
@@ -102,6 +143,7 @@ class ChatService:
             logger.info(f"User {user_id} joined chat room {chat_id}")
             
             # Optionally, send past messages to the user - this would involve MessageRepository
+            # Aqui se van a cargar todos los chats
         else:
             emit("client_error", {"msg": "You are not a participant in this chat."}, to=user_id)
             logger.warning(f"User {user_id} attempted to join chat {chat_id} without being a participant.")
@@ -114,6 +156,22 @@ class ChatService:
             emit("server_error", {"msg": "El chat no fue encontrado"}, to=user_id)
             logger.warning(f"User {user_id} attempted to join non-existent chat {chat_id}.")
             return
+        # Actualizamos el last messsage at del chat
+        chat.last_message_at = datetime.now()
+        self.chat_repository.update(chat)
+        # Creamos el mensaje
+        new_message = Message(conversation_id=chat_id, sender_id=user_id, content=content, delivered=False)
+        # verificamos que el user de destino este activo para mandar el mensaje, si no se pone como delivered False
+        target_user = self.user_repository.find_by_id(chat.user_a if chat.user_a != user_id else chat.user_b)
+        
+        if not target_user:
+            emit("server_error", {"msg": "usuario 2 del chat no encontrado"})
+        elif target_user.is_active:
+            # El usuario 2 esta online, se guarda como delivered
+            new_message.delivered = True
+        
+        self.message_repository.add(new_message)
+        
         emit("dm",{
             "chat_id": chat_id,
             "sender": user_id,

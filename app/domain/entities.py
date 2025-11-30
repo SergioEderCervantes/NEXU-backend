@@ -59,6 +59,24 @@ class Chat(BaseEntity):
     user_b: str
     last_message_at: datetime = Field(default_factory=datetime.now)
 
+    @model_validator(mode='before')
+    @classmethod
+    def create_id(cls, data: Any) -> Any:
+        """
+        Crea un ID compuesto y determinístico para el chat basado en los IDs de los usuarios.
+        Ordena los IDs de los usuarios para garantizar que el chat entre A y B tenga el mismo ID que entre B y A.
+        """
+        if isinstance(data, dict) and 'id' not in data:
+            user_a = data.get('user_a')
+            user_b = data.get('user_b')
+            if not user_a or not user_b:
+                raise ValueError("user_a and user_b must be provided to create a Chat")
+            
+            # Ordenar los IDs para consistencia
+            sorted_users = sorted([user_a, user_b])
+            data['id'] = f"{sorted_users[0]}-{sorted_users[1]}"
+        return data
+
 
     
 class Message(BaseEntity):

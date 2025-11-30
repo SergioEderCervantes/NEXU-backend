@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from app.repository.message_repository import MessageRepository
 from app.infraestructure.file_service import FileManager
 from app.infraestructure.encription_service import EncryptionManager
-from app.domain.entities import Message, DbFile
+from app.domain.entities import Message
 from datetime import datetime, timedelta
 import uuid
 

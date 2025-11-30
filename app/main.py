@@ -22,7 +22,6 @@ def create_app():
     register_blueprints(flask_app)
     
     # Import socket handlers to register them
-    import app.sockets.chat
     
     # Initialize Socket.IO with the app
     socketio.init_app(flask_app)

@@ -12,7 +12,7 @@ def timed_task(task_name: str):
                 duration = time.perf_counter() - start
                 logger.info(f"Tarea: {task_name} completada en: {duration:.2f}s")
                 return result
-            except Exception as e:
+            except Exception:
                 duration = time.perf_counter() - start
                 logger.exception(f"Error en tarea:  {task_name} tras: {duration:.2f}s")
                 raise

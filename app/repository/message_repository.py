@@ -63,3 +63,23 @@ class MessageRepository(BaseRepository[Message]):
         # Sort messages by timestamp
         messages.sort(key=lambda x: x.timestamp)
         return messages
+
+    def count_unread_by_chat(self, chat_id: str, user_id: str) -> int:
+        """
+        Counts unread messages in a specific chat for a given user.
+        Unread messages are those not sent by the user and marked as not delivered.
+
+        Args:
+            chat_id (str): The ID of the chat (conversation).
+            user_id (str): The ID of the user for whom to count unread messages.
+
+        Returns:
+            int: The number of unread messages.
+        """
+        data = self._get_data()
+        # Correct JSONPath using `&` for AND logic within a filter expression.
+        query = (f'$.{self.entity_name}[?(@.conversation_id == "{chat_id}" & '
+                 f'@.sender_id != "{user_id}" & @.delivered == false)]')
+        jsonpath_expression = parse(query)
+        matches = jsonpath_expression.find(data)
+        return len(matches)
