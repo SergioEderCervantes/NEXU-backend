@@ -51,7 +51,7 @@ class BaseRepository(ABC, Generic[T]):
         Args:
             data (dict): The dictionary containing all entities to be saved.
         """
-        json_data = json.dumps(data, indent=4)
+        json_data = json.dumps(data, indent=4, default=str)
         encrypted_data = self.encryption_manager.encrypt_data(json_data)
         self.file_manager.write_file(self.db_file, encrypted_data)
 
@@ -138,7 +138,8 @@ class BaseRepository(ABC, Generic[T]):
             Optional[T]: The updated entity object if found and updated, otherwise None.
         """
         data = self._get_data()
-        jsonpath_expression = parse(f'$.{self.entity_name}[?(@.id == {entity.id})]')
+        query_id = f'"{entity.id}"' if isinstance(entity.id, str) else entity.id
+        jsonpath_expression = parse(f'$.{self.entity_name}[?(@.id == {query_id})]')
         if jsonpath_expression.update(data, entity.model_dump()):
             self._save_data(data)
             return entity
@@ -155,7 +156,8 @@ class BaseRepository(ABC, Generic[T]):
             bool: True if the entity was found and deleted, False otherwise.
         """
         data = self._get_data()
-        jsonpath_expression = parse(f'$.{self.entity_name}[?(@.id == {entity_id})]')
+        query_id = f'"{entity_id}"' if isinstance(entity_id, str) else entity_id
+        jsonpath_expression = parse(f'$.{self.entity_name}[?(@.id == {query_id})]')
         if jsonpath_expression.find(data):
             updated_items = [item for item in data[self.entity_name] if item['id'] != entity_id]
             data[self.entity_name] = updated_items

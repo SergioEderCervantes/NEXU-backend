@@ -5,7 +5,7 @@ from typing import Any, Optional
 from app.config.settings import Config
 from app.utils.hashing import hash_password
 from datetime import datetime
-
+import uuid
 
 class DbFile(Enum):
     USERS = os.path.join(Config.BASE_PATH, "Usuarios.json.enc")
@@ -17,7 +17,7 @@ class DbFile(Enum):
 
 
 class BaseEntity(BaseModel):
-    id: str = Field(...)
+    id: str = Field(default="")
 
 
 class User(BaseEntity):
@@ -46,13 +46,33 @@ class User(BaseEntity):
 
 
 class Chat(BaseEntity):
-    user_a: int
-    user_b: int
+    user_a: str
+    user_b: str
     last_message_at: datetime = Field(default_factory=datetime.now)
     
+    @model_validator(mode='before')
+    @classmethod
+    def create_uuid(cls, data:Any) -> Any:
+        """
+        Crea el id unico con uuid v4 en caso de que se llegue sin id, que va a ser casi siempre
+        """
+        if isinstance(data, dict) and 'id' not in data:
+            data['id'] = str(uuid.uuid4())
+        return data
+
+    
 class Message(BaseEntity):
-    conversation_id: int
-    sender_id: int
+    conversation_id: str
+    sender_id: str
     content: str
     timestamp: datetime = Field(default_factory=datetime.now)
     delivered: bool
+    @model_validator(mode='before')
+    @classmethod
+    def create_uuid(cls, data:Any) -> Any:
+        """
+        Crea el id unico con uuid v4 en caso de que se llegue sin id, que va a ser casi siempre
+        """
+        if isinstance(data, dict) and 'id' not in data:
+            data['id'] = str(uuid.uuid4())
+        return data

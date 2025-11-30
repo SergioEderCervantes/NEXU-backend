@@ -78,6 +78,7 @@ class LoginService:
         # Generate and return the token
         return self._create_access_token(user_id=user.id)
 
+    # TODO: maybe pasarlo a un model validator de pydantic cuando se inicialice la instancia
     def _fill_user_data(self, raw_user_data: dict) -> dict:
         """
         Fills in system-managed user data like ID from email prefix and active status.

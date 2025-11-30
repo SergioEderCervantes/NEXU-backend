@@ -1,0 +1,150 @@
+import pytest
+import json
+from unittest.mock import MagicMock
+from app.repository.chat_repository import ChatRepository
+from app.infraestructure.file_service import FileManager
+from app.infraestructure.encription_service import EncryptionManager
+from app.domain.entities import Chat, DbFile
+from datetime import datetime
+import uuid
+
+@pytest.fixture
+def mock_file_manager():
+    """Mock for FileManager."""
+    return MagicMock(spec=FileManager)
+
+@pytest.fixture
+def mock_encryption_manager():
+    """Mock for EncryptionManager."""
+    return MagicMock(spec=EncryptionManager)
+
+@pytest.fixture
+def chat_repository(mock_file_manager, mock_encryption_manager):
+    """Fixture for ChatRepository with mocked dependencies."""
+    return ChatRepository(mock_file_manager, mock_encryption_manager)
+
+@pytest.fixture
+def sample_chats_data():
+    """Sample chat data that mimics the structure in the JSON file."""
+    return {
+        "chats": [
+            {
+                "id": str(uuid.uuid4()),
+                "user_a": str(uuid.uuid4()),
+                "user_b": str(uuid.uuid4()),
+                "last_message_at": datetime.now().isoformat(),
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "user_a": str(uuid.uuid4()),
+                "user_b": str(uuid.uuid4()),
+                "last_message_at": datetime.now().isoformat(),
+            }
+        ]
+    }
+
+def setup_mocks(mock_file_manager, mock_encryption_manager, data):
+    """Helper to configure mocks for reading data."""
+    # The data saved in the file is a dictionary, so we dump it to a JSON string.
+    # The model_dump() method from pydantic is used for this.
+    # We need to make sure the data is in the correct format.
+    # In the repository, the data is dumped using model_dump, so we don't need to do it here.
+    # Just make sure the datetime is in isoformat.
+    json_data = json.dumps(data, indent=4)
+    encrypted_data = b'encrypted_data_mock'
+    
+    mock_file_manager.read_file.return_value = encrypted_data
+    mock_encryption_manager.decrypt_data.return_value = json_data
+    mock_encryption_manager.encrypt_data.return_value = b'new_encrypted_data'
+
+# --- Repository Tests ---
+
+def test_find_all(chat_repository, mock_file_manager, mock_encryption_manager, sample_chats_data):
+    """Test finding all chats."""
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
+    
+    chats = chat_repository.find_all()
+    
+    assert len(chats) == 2
+    assert isinstance(chats[0], Chat)
+    assert chats[0].id == sample_chats_data["chats"][0]["id"]
+    mock_file_manager.read_file.assert_called_once_with(DbFile.CHATS)
+    mock_encryption_manager.decrypt_data.assert_called_once_with(b'encrypted_data_mock')
+
+def test_find_by_id(chat_repository, mock_file_manager, mock_encryption_manager, sample_chats_data):
+    """Test finding a chat by ID."""
+    chat_id_to_find = sample_chats_data["chats"][1]["id"]
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
+    
+    chat = chat_repository.find_by_id(chat_id_to_find)
+    
+    assert chat is not None
+    assert isinstance(chat, Chat)
+    assert chat.id == chat_id_to_find
+
+def test_find_by_id_not_found(chat_repository, mock_file_manager, mock_encryption_manager, sample_chats_data):
+    """Test that finding a non-existent chat by ID returns None."""
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
+    
+    chat = chat_repository.find_by_id(str(uuid.uuid4()))
+    
+    assert chat is None
+
+def test_add_chat(chat_repository, mock_file_manager, mock_encryption_manager, sample_chats_data):
+    """Test adding a new chat."""
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
+    
+    new_chat = Chat(
+        id=str(uuid.uuid4()),
+        user_a=str(uuid.uuid4()),
+        user_b=str(uuid.uuid4())
+    )
+    
+    chat_repository.add(new_chat)
+    
+    mock_encryption_manager.encrypt_data.assert_called_once()
+    mock_file_manager.write_file.assert_called_once()
+    
+    args, _ = mock_encryption_manager.encrypt_data.call_args
+    encrypted_payload_str = args[0]
+    encrypted_payload_dict = json.loads(encrypted_payload_str)
+    
+    assert len(encrypted_payload_dict["chats"]) == 3
+    assert encrypted_payload_dict["chats"][-1]["id"] == new_chat.id
+
+def test_update_chat(chat_repository, mock_file_manager, mock_encryption_manager, sample_chats_data):
+    """Test updating an existing chat."""
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
+    
+    chat_to_update = sample_chats_data["chats"][0]
+    updated_chat = Chat(
+        id=chat_to_update["id"],
+        user_a=chat_to_update["user_a"],
+        user_b=str(uuid.uuid4()), # updated user_b
+        last_message_at=datetime.fromisoformat(chat_to_update["last_message_at"])
+    )
+    
+    result = chat_repository.update(updated_chat)
+    
+    assert result is not None
+    assert result.user_b == updated_chat.user_b
+    
+    args, _ = mock_encryption_manager.encrypt_data.call_args
+    encrypted_payload_dict = json.loads(args[0])
+    
+    assert encrypted_payload_dict["chats"][0]["user_b"] == updated_chat.user_b
+
+def test_delete_chat(chat_repository, mock_file_manager, mock_encryption_manager, sample_chats_data):
+    """Test deleting a chat."""
+    chat_id_to_delete = sample_chats_data["chats"][0]["id"]
+    setup_mocks(mock_file_manager, mock_encryption_manager, sample_chats_data)
+    
+    result = chat_repository.delete(chat_id_to_delete)
+    
+    assert result is True
+    
+    args, _ = mock_encryption_manager.encrypt_data.call_args
+    encrypted_payload_dict = json.loads(args[0])
+    
+    assert len(encrypted_payload_dict["chats"]) == 1
+    assert encrypted_payload_dict["chats"][0]["id"] == sample_chats_data["chats"][1]["id"]
