@@ -44,33 +44,6 @@ def get_current_user():
     current_user = g.current_user
     return jsonify(current_user.model_dump(exclude={'password'})), 200
 
-@users_bp.route("/offline", methods=["post"])
-@token_required
-def offline():
-    # TODO: Este offline no es del todo confiable, es mejor cuando implemente lo de sockets manejar el cambio de estado ahi mismo
-    """
-    Endpoint designed to set offline to a user
-    """
-    current_user = g.current_user
-    login_service.set_user_status(current_user, False)
-    
-    return jsonify({"message": "User setted offline"}), 200
-
-
-@users_bp.route("/online", methods=["POST"])
-@token_required
-def online():
-    # TODO: igual que el online, cuando este el socket, este mismo puede intentar conectarse, y el mismo puede validar el token 
-    """
-    Endpoint designed to set online to a user
-    """
-    current_user = g.current_user
-    login_service.set_user_status(current_user, True)
-
-    return jsonify({"message": "User setted online"}), 200
-    
-    
-
 
 @users_bp.route("/signup", methods=["POST"])
 def signup():

@@ -1,6 +1,7 @@
+
 from app.domain.entities import User
 from app.extensions import socketio
-from flask_socketio import disconnect
+from flask_socketio import disconnect, send
 from app.middleware.auth import socket_token_required
 import logging
 logger = logging.getLogger('app')
@@ -19,6 +20,8 @@ def on_connect(user:User, auth):
     logger.info(f"User validated via socket: {user.email} (ID: {user.id})")
     # Setting up online the user
     user.is_active = True
+    # Notifing a successful connection:
+    send("Connected to server successfully")
 
 
 
@@ -34,4 +37,7 @@ def on_disconnect(user:User):
     user.is_active = False
     
     
-    
+@socketio.event
+def start_chat(data):
+   logger.debug(f"Si llegó el mensaje: {data["msg"]}")   
+   send("Mensaje recibido en el servidor")

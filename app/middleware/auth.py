@@ -60,6 +60,8 @@ def token_required(f):
     return decorated_function
 
 
+# TODO: quiza despues sea mejor cambiar esto por session de Flask, pero como ya esta hecho y funciona, lo dejare por el momento, tambien puede ser que sea mejor
+# con auth en vez de headers, pero eso lo veremos cuando se haga conexion con el frontend
 def socket_token_required(f):
     """
     Decorator that authenticates a user from the socket connection headers
@@ -83,7 +85,6 @@ def socket_token_required(f):
                 disconnect()
                 return
 
-            logger.info("Decodificando el JWT del WebSocket")
             payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])  # type: ignore
             user_id = int(payload["sub"])
             logger.info(f"JWT decodificado, id del user: {user_id}")

@@ -19,7 +19,7 @@ register_blueprints(flask_app)
 # Registro de scheduled tasks
 
 # Import socket handlers to register them
-import app.sockets.connection
+import app.sockets.chat
 
 socketio.init_app(flask_app) 
 # Initialize Socket.IO with the app
