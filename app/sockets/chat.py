@@ -1,7 +1,7 @@
 
 from app.domain.entities import User
 from app.extensions import socketio
-from flask_socketio import disconnect, send, join_room
+from flask_socketio import disconnect, send, join_room, emit
 from flask import request, session
 from app.middleware.auth import socket_token_required
 from app.application.UserService import user_service
@@ -9,6 +9,7 @@ from app.repository.chat_repository import ChatRepository
 from app.infraestructure.file_service import FileManager
 from app.infraestructure.encription_service import EncryptionManager
 import logging
+from app.application.ChatService import chat_service
 
 logger = logging.getLogger('app')
 
@@ -16,6 +17,7 @@ logger = logging.getLogger('app')
 file_manager = FileManager()
 encryption_manager = EncryptionManager()
 chat_repository = ChatRepository(file_manager, encryption_manager)
+# TODO: Ver bien como se hace error handling y validaciones con socketio
 
 @socketio.on("connect")
 @socket_token_required
@@ -62,12 +64,17 @@ def on_disconnect():
     
 @socketio.event
 def start_chat(data):
-   logger.debug(f"Si llegó el mensaje: {data["msg"]}")
+    user_a_id = session.get('user_id')
+    user_b_id = data['target_id']
+    msg = data['content']
+    if not user_a_id or not user_b_id or not msg:
+        return
+    
+    chat_service.start_chat(user_a_id, user_b_id, msg)
    
-   send("Mensaje recibido en el servidor")
 
-@socketio.on('join_chat')
-def on_join_chat(data):
+@socketio.event
+def join_chat(data):
     """
     Allows a user to join a specific chat room after authentication.
     The user must be a participant in the chat.
@@ -94,10 +101,35 @@ def on_join_chat(data):
     # Check if the user is a participant in this chat
     if user_id == chat.user_a or user_id == chat.user_b:
         join_room(chat_id)
-        send(f"Joined chat room: {chat_id}", to=request.sid) # type: ignore
+        send(f"Joined chat room: {chat_id}", to=user_id) # type: ignore
         logger.info(f"User {user_id} joined chat room {chat_id}")
         
         # Optionally, send past messages to the user - this would involve MessageRepository
     else:
         send("Error: You are not a participant in this chat.", to=request.sid) # type: ignore
         logger.warning(f"User {user_id} attempted to join chat {chat_id} without being a participant.")
+
+@socketio.event
+def dm(data):
+    user_id = session.get('user_id')
+    chat_id = data.get('target_id')
+    content = data.get('content')
+    if not user_id:
+        # User not authenticated for this session, disconnect or send error
+        disconnect()
+        return
+    if not chat_id:
+        send("Error: chat_id missing.", to=user_id) 
+        return
+    
+    chat = chat_repository.find_by_id(chat_id)
+
+    if not chat:
+        send("Error: Chat not found.", to=user_id)
+        logger.warning(f"User {user_id} attempted to join non-existent chat {chat_id}.")
+        return
+    emit("dm",{
+        "chat_id": chat_id,
+        "sender": user_id,
+        "content": content
+    }, to=chat_id)
