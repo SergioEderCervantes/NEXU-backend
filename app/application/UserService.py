@@ -18,6 +18,14 @@ class UserService:
         logger.info("Retrieving all users from the repository.")
         users = self.user_repository.find_all()
         return users
+
+    def get_user_by_id(self, user_id: str) -> User | None:
+        """
+        Retrieves a single user by their ID.
+        """
+        logger.info(f"Retrieving user with ID: {user_id}")
+        user = self.user_repository.find_by_id(user_id)
+        return user
     
 
     def set_user_status(self, user_id: str, is_active: bool) -> None:

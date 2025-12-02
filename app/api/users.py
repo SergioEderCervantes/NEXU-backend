@@ -27,7 +27,7 @@ def get_all_users():
         # For now, we just proceed.
         users = user_service.get_all_users()
         users_dict = [user.model_dump(exclude={'password'}) for user in users]
-        return jsonify(users_dict), 200
+        return jsonify({"data": users_dict}), 200
     except Exception as e:
         logger.error(f"Error retrieving all users: {e}")
         return jsonify(
@@ -43,7 +43,7 @@ def get_current_user():
     """
     # The user object is attached to Flask's global `g` object by the decorator.
     current_user = g.current_user
-    return jsonify(current_user.model_dump(exclude={'password'})), 200
+    return jsonify({"data": current_user.model_dump(exclude={'password'})}), 200
 
 
 @users_bp.route("/signup", methods=["POST"])
@@ -58,7 +58,8 @@ def signup():
             return jsonify({"error": "Se requiere un cuerpo de solicitud JSON."}), 400
 
         access_token = login_service.signup(data)
-        return jsonify({"access_token": access_token, "token_type": "bearer"}), 201
+        response_data = {"access_token": access_token, "token_type": "bearer"}
+        return jsonify({"data": response_data}), 201
     except ValidationError as e:
         error_details = [
             f"El campo '{err['loc'][0]}' {err['msg'].lower()}" for err in e.errors()
@@ -97,7 +98,8 @@ def login():
             return jsonify({"error": "Email y contraseña son requeridos."}), 400
 
         access_token = login_service.login(email, password)
-        return jsonify({"access_token": access_token, "token_type": "bearer"}), 200
+        response_data = {"access_token": access_token, "token_type": "bearer"}
+        return jsonify({"data": response_data}), 200
     except InvalidCredentialsException as e:
         logger.warning(f"Login failed: {e.message}")
         return jsonify({"error": e.message}), 401
@@ -106,4 +108,19 @@ def login():
         return jsonify({"error": "Ocurrió un error inesperado al iniciar sesión."}), 500
 
 
-
+@users_bp.route("/<user_id>", methods=["GET"])
+@token_required
+def user_details(user_id):
+    """
+    Get details of a specific user by their ID. Requires a valid token.
+    """
+    try:
+        user = user_service.get_user_by_id(user_id)
+        if user:
+            return jsonify({"data": user.model_dump(exclude={'password'})}), 200
+        else:
+            logger.warning(f"User with ID {user_id} not found.")
+            return jsonify({"error": "Usuario no encontrado."}), 404
+    except Exception as e:
+        logger.error(f"Error retrieving user {user_id}: {e}", exc_info=True)
+        return jsonify({"error": "Ocurrió un error inesperado al obtener el usuario."}), 500
