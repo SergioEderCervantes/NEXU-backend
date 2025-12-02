@@ -7,6 +7,16 @@ import logging
 from app.extensions import socketio
 from app.config.settings import Config
 from flask_cors import CORS
+import cloudinary
+
+def init_cloudinary():
+    cloudinary.config(
+        cloud_name = Config.CLOUDINARY_CLOUD_NAME,
+        api_key = Config.CLOUDINARY_API_KEY,
+        api_secret = Config.CLOUDINARY_API_SECRET,
+        secure = True
+    )
+
 
 def create_app():
     """
@@ -26,6 +36,9 @@ def create_app():
     
     # Register blueprints
     register_blueprints(flask_app)
+
+    # Config cloudinary
+    init_cloudinary()
     
     # Import socket handlers to register them
     import app.sockets.chat

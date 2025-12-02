@@ -19,6 +19,11 @@ class Config:
     JWT_ALGORITHM = "HS256"
     
     ACCESS_TOKEN_EXPIRE_MINUTES = 525600 # 1 year for development convenience
+    
+    # --- CLOUDINARY Settings ---
+    CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME")
+    CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY")
+    CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET")
 
 # Validación fatal: detener la aplicación si no existe JWT_SECRET_KEY
 if Config.JWT_SECRET_KEY is None:

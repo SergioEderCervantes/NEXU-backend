@@ -21,28 +21,16 @@ This document outlines the usage of the user-related API endpoints.
 *   **Success (200 OK):**
     *   **Body:** An array of user objects.
     ```json
-    [
-        {
-            "id": 293847,
-            "name": "Eder",
-            "email": "al0293847@example.com",
-            "is_active": true,
-            "gender": "Masculino",
-            "bio": "Software developer.",
-            "reputation": 0
-        },
-        {
-            "id": 293848,
-            "name": "Another User",
-            "email": "al0293848@example.com",
-            "is_active": true,
-            "gender": "Femenino",
-            "bio": null,
-            "reputation": 5
-        }
-    ]
+    {
+        "data": [
+            {
+                "id": "293847",
+                "name": "Eder",
+                ...
+            }
+        ]
+    }
     ```
-    *Each user object will exclude the `password` field.*
 *   **Error (500 Internal Server Error):**
     ```json
     {
@@ -58,7 +46,7 @@ This document outlines the usage of the user-related API endpoints.
 
 **Description:** Retrieves the profile information of the currently authenticated user.
 
-**Authentication:** Required. This endpoint needs a valid JSON Web Token (JWT) provided in the `Authorization` header as a Bearer token.
+**Authentication:** Required. A valid JWT must be provided in the `Authorization` header.
 
 **Request:**
 *   **Method:** `GET`
@@ -70,16 +58,14 @@ This document outlines the usage of the user-related API endpoints.
     *   **Body:** A single user object.
     ```json
     {
-        "id": 293847,
-        "name": "Eder",
-        "email": "al0293847@example.com",
-        "is_active": true,
-        "gender": "Masculino",
-        "bio": "Software developer.",
-        "reputation": 0
+        "data": {
+            "id": "293847",
+            "name": "Eder",
+            "email": "al0293847@example.com",
+            ...
+        }
     }
     ```
-    *The user object will exclude the `password` field.*
 *   **Error (401 Unauthorized):**
     ```json
     {
@@ -101,57 +87,27 @@ This document outlines the usage of the user-related API endpoints.
 *   **Method:** `POST`
 *   **Headers:**
     *   `Content-Type: application/json`
-*   **Body (JSON):** The following fields are required.
+*   **Body (JSON):**
     ```json
     {
         "name": "New User",
-        "email": "al0123456@example.com",
+        "email": "new@example.com",
         "password": "a_secure_password",
-        "gender": "Masculino",
-        "bio": "Optional user biography."
+        "gender": "Masculino"
     }
     ```
-    *   `name` (string, required)
-    *   `email` (string, required): Must be a valid email. The numeric prefix of the email (without `al`) will be used as the user `id`.
-    *   `password` (string, required)
-    *   `gender` (string, required)
-    *   `bio` (string, optional)
 
 **Response:**
 *   **Success (201 Created):**
     ```json
     {
-        "access_token": "your_newly_generated_jwt",
-        "token_type": "bearer"
-    }
-    ```
-*   **Error (400 Bad Request):** For missing JSON data or missing required fields (e.g., email).
-    ```json
-    {
-        "error": "Se requiere un cuerpo de solicitud JSON."
-    }
-    ```
-*   **Error (422 Unprocessable Entity):** For data validation errors (e.g., invalid email).
-    ```json
-    {
-        "error": "Datos de entrada inválidos.",
-        "detalles": [
-            "El campo 'email' debe ser una dirección de email válida"
-        ]
+        "data": {
+            "access_token": "your_newly_generated_jwt",
+            "token_type": "bearer"
+        }
     }
     ```
 *   **Error (409 Conflict):** If a user with the same email already exists.
-    ```json
-    {
-        "error": "Ya existe un usuario con este email."
-    }
-    ```
-*   **Error (500 Internal Server Error):**
-    ```json
-    {
-        "error": "Ocurrió un error inesperado al registrar el usuario."
-    }
-    ```
 
 ---
 
@@ -159,7 +115,7 @@ This document outlines the usage of the user-related API endpoints.
 
 **Endpoint:** `POST /users/login`
 
-**Description:** Authenticates an existing user and returns a JSON Web Token (JWT).
+**Description:** Authenticates an existing user and returns a JWT.
 
 **Authentication:** None required.
 
@@ -174,32 +130,69 @@ This document outlines the usage of the user-related API endpoints.
         "password": "theirpassword123"
     }
     ```
-    *   `email` (string, required)
-    *   `password` (string, required)
 
 **Response:**
 *   **Success (200 OK):**
     ```json
     {
-        "access_token": "your_generated_jwt",
-        "token_type": "bearer"
-    }
-    ```
-*   **Error (400 Bad Request):** For missing JSON or missing `email`/`password` fields.
-    ```json
-    {
-        "error": "Email y contraseña son requeridos."
+        "data": {
+            "access_token": "your_generated_jwt",
+            "token_type": "bearer"
+        }
     }
     ```
 *   **Error (401 Unauthorized):** If credentials are incorrect.
+
+---
+
+## 5. Upload User Avatar
+
+**Endpoint:** `POST /users/upload_avatar`
+
+**Description:** Uploads or updates the profile picture for the currently authenticated user. The image is sent as a `multipart/form-data` request.
+
+**Authentication:** Required. A valid JWT must be provided in the `Authorization` header.
+
+**Request:**
+*   **Method:** `POST`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+    *   `Content-Type: multipart/form-data`
+*   **Body (Form Data):**
+    *   **Key:** `avatar`
+    *   **Value:** The image file (e.g., `my_picture.jpg`).
+
+**Example cURL Request:**
+```bash
+curl -X POST \
+  http://your-domain.com/users/upload_avatar \
+  -H "Authorization: Bearer <your_access_token>" \
+  -F "avatar=@/path/to/your/image.jpg"
+```
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** Returns the updated user object, including the new `avatar_url`.
     ```json
     {
-        "error": "Credenciales inválidas."
+        "data": {
+            "id": "293847",
+            "name": "Eder",
+            "email": "al0293847@example.com",
+            "avatar_url": "https://res.cloudinary.com/",
+            ...
+        }
     }
     ```
-*   **Error (500 Internal Server Error):**
+*   **Error (400 Bad Request):** If the `avatar` file part is missing or the file has no name.
     ```json
     {
-        "error": "Ocurrió un error inesperado al iniciar sesión."
+        "error": "No se encontró el archivo del avatar en la solicitud."
+    }
+    ```
+*   **Error (500 Internal Server Error):** For unexpected issues during the upload process.
+    ```json
+    {
+        "error": "Ocurrió un error desconocido al cambiar el avatar."
     }
     ```

@@ -4,6 +4,7 @@ from app.domain.entities import User
 from app.repository.user_repository import UserRepository
 from app.infraestructure.file_service import FileManager
 from app.infraestructure.encription_service import EncryptionManager
+from app.application.upload_service import upload_service
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,37 @@ class UserService:
             logger.info(f"Successfully updated status for user {user_id}")
         else:
             logger.warning(f"Could not set status for user {user_id}: User not found.")
+    
+    def upload_avatar(self, user_id: str, file) -> User:
+        """
+        Uploads a new avatar for a user and updates their profile.
+
+        Args:
+            user_id: The ID of the user whose avatar is being updated.
+            file: The avatar file to upload.
+
+        Returns:
+            The updated User object with the new avatar URL.
+            
+        Raises:
+            ValueError: If the user with the given ID is not found.
+        """
+        logger.info(f"Starting avatar upload process for user_id: {user_id}")
+        user = self.get_user_by_id(user_id)
+        if not user:
+            logger.error(f"User with id: {user_id} not found for avatar upload.")
+            raise ValueError("User not found")
+        
+        # Delegate the upload to the specialized service
+        url = upload_service.upload_avatar(file, user_id)
+        logger.info(f"Avatar uploaded to: {url}. Updating user profile.")
+        
+        # Update user's avatar URL and save
+        user.avatar_url = url
+        self.user_repository.update(user)
+        logger.info(f"User {user_id} profile updated with new avatar.")
+        
+        return user
 
 
 # Initialize dependencies for the UserService

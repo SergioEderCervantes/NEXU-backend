@@ -39,6 +39,7 @@ class User(BaseEntity):
     date_of_birth: Optional[datetime] = None
     bio: Optional[str] = None
     skills: List[str] = Field(default_factory=list)
+    avatar_url: Optional[str] = "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
 
     @model_validator(mode='before')
     @classmethod

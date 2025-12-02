@@ -124,3 +124,30 @@ def user_details(user_id):
     except Exception as e:
         logger.error(f"Error retrieving user {user_id}: {e}", exc_info=True)
         return jsonify({"error": "Ocurrió un error inesperado al obtener el usuario."}), 500
+
+@users_bp.route("/upload_avatar", methods = ["POST"])
+@token_required
+def upload_avatar():
+    """
+    Uploads or updates the avatar for the currently authenticated user.
+    The image must be sent as a multipart/form-data with the key 'avatar'.
+    """
+    try:
+        current_user = g.current_user
+        if "avatar" not in request.files:
+            logger.warning(f"Avatar upload attempt without file for user: {current_user.id}")
+            return jsonify({"error": "No se encontró el archivo del avatar en la solicitud."}), 400
+        
+        file = request.files["avatar"]
+        if file.filename == '':
+            logger.warning(f"Avatar upload attempt with empty filename for user: {current_user.id}")
+            return jsonify({"error": "El archivo del avatar no tiene nombre."}), 400
+
+        updated_user = user_service.upload_avatar(current_user.id, file)
+        logger.info(f"Successfully updated avatar for user: {current_user.id}")
+        return jsonify({"data": updated_user.model_dump(exclude={'password'})}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        logger.error(f"Error changing avatar for user {g.current_user.id}: {e}", exc_info=True)
+        return jsonify({"error": "Ocurrió un error desconocido al cambiar el avatar."}), 500
