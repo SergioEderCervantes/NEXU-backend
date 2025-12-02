@@ -1,7 +1,7 @@
 from enum import Enum
 import os
 from pydantic import BaseModel, Field, model_validator
-from typing import Any, Optional
+from typing import Any, Optional, List
 from app.config.settings import Config
 from app.utils.hashing import hash_password
 from datetime import datetime
@@ -34,9 +34,11 @@ class User(BaseEntity):
     email: str
     password: str
     is_active: bool = True
-    gender: str = "No especificado"
+    career: Optional[str] = None
+    gender: Optional[str] = None
+    date_of_birth: Optional[datetime] = None
     bio: Optional[str] = None
-    reputation: int = 0
+    skills: List[str] = Field(default_factory=list)
 
     @model_validator(mode='before')
     @classmethod
