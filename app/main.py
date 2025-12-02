@@ -5,7 +5,7 @@ from app.middleware.logging_middleware import log_request_time
 from app.api import register_blueprints
 import logging
 from app.extensions import socketio
-
+from app.config.settings import Config
 def create_app():
     """
     Creates and configures a Flask application instance, including blueprints
@@ -14,6 +14,7 @@ def create_app():
     logger = setup_logging(logging_level=logging.DEBUG)
     
     flask_app = Flask(__name__)
+    flask_app.config['SECRET_KEY']= Config.FLASK_SECRET_KEY
     
     # Set up middleware
     log_request_time(flask_app)

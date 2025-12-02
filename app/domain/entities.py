@@ -34,7 +34,7 @@ class User(BaseEntity):
     email: str
     password: str
     is_active: bool = True
-    gender: str
+    gender: str = "No especificado"
     bio: Optional[str] = None
     reputation: int = 0
 

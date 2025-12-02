@@ -4,6 +4,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
+    # --- Flask Settings
+    FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "Avalancha")
+    ALLOWED_ORIGINS = "*"
+ 
     # --- Fernet Encryption Settings ---
     FERNET_KEY = os.getenv("FERNET_KEY", None)
     
