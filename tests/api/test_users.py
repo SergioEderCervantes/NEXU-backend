@@ -42,10 +42,10 @@ def test_get_all_users_success(mock_user_service, mock_jwt_decode, mock_user_rep
     # Assert
     assert response.status_code == 200
     json_data = response.get_json()
-    assert len(json_data) == 2
-    assert json_data[0]['email'] == "admin@example.com"
-    assert 'password' not in json_data[0]
-    assert json_data[1]['name'] == "Normal User"
+    assert len(json_data['data']) == 2
+    assert json_data['data'][0]['email'] == "admin@example.com"
+    assert 'password' not in json_data['data'][0]
+    assert json_data['data'][1]['name'] == "Normal User"
     mock_user_service.get_all_users.assert_called_once()
 
 @patch('app.middleware.auth.UserRepository')
@@ -63,7 +63,7 @@ def test_get_all_users_empty(mock_user_service, mock_jwt_decode, mock_user_repo,
     
     # Assert
     assert response.status_code == 200
-    assert response.get_json() == []
+    assert response.get_json() == {"data": []}
     mock_user_service.get_all_users.assert_called_once()
 
 @patch('app.middleware.auth.UserRepository')
@@ -100,8 +100,8 @@ def test_login_success(mock_login_service, client):
     # Assert
     assert response.status_code == 200
     json_data = response.get_json()
-    assert json_data['access_token'] == "fake_jwt_token"
-    assert json_data['token_type'] == "bearer"
+    assert json_data['data']['access_token'] == "fake_jwt_token"
+    assert json_data['data']['token_type'] == "bearer"
     mock_login_service.login.assert_called_once_with("test@example.com", "correct_password")
 
 @patch('app.api.users.login_service')
