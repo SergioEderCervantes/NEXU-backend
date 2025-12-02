@@ -14,10 +14,10 @@ import { io } from "socket.io-client";
 
 const jwt = "tu_json_web_token"; // El JWT obtenido del endpoint de login/signup
 
-const socket = io("http://localhost:5000", { // Reemplaza con la URL de tu servidor
-  auth: {
-    token: jwt
-  }
+const socket = io("http://localhost:5000", {  // URL del servidor
+    extraHeaders: {
+        "Authorization": "Bearer " + jwt
+    }
 });
 
 socket.on('connect', () => {
