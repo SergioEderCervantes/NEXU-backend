@@ -20,7 +20,7 @@ def get_user_chats():
     try:
         current_user_id = g.current_user.id
         chats_data = chat_service.get_chats_for_user(current_user_id)
-        return jsonify(chats_data), 200
+        return jsonify({"data": chats_data}), 200
     except Exception as e:
         logger.error(f"Error retrieving chats for user {g.current_user.id}: {e}", exc_info=True)
         return jsonify(
