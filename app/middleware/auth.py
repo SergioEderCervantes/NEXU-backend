@@ -60,34 +60,45 @@ def token_required(f):
     return decorated_function
 
 
-# TODO: quiza despues sea mejor cambiar esto por session de Flask, pero como ya esta hecho y funciona, lo dejare por el momento, tambien puede ser que sea mejor
-# con auth en vez de headers, pero eso lo veremos cuando se haga conexion con el frontend
 def socket_token_required(f):
     """
-    Decorator that authenticates a user from the socket connection headers
+    Decorator that authenticates a user from the socket connection auth data
     and passes the user object to the decorated function.
     """
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         try:
-            logger.info("Iniciando validación de token para WebSocket desde headers")
+            logger.info("Iniciando validación de token para WebSocket")
             token = None
-            # During a Socket.IO connection, headers are in the WSGI environ dictionary
+            
+            # Try to get token from different sources
+            # 1. From extraHeaders (HTTP_AUTHORIZATION in environ)
             if 'HTTP_AUTHORIZATION' in request.environ:
                 auth_header = request.environ['HTTP_AUTHORIZATION']
                 if auth_header.startswith('Bearer '):
                     token = auth_header.split(' ')[1]
-            else:
-                logger.debug(f"Asi se ve el request: {request}")
+                    logger.info("Token extraído de HTTP_AUTHORIZATION")
+            
+            # 2. From auth parameter (if frontend sends it via socket.io auth)
+            if not token and len(args) > 0 and isinstance(args[0], dict):
+                auth_data = args[0]
+                if 'token' in auth_data:
+                    token = auth_data['token']
+                    logger.info("Token extraído de auth.token")
+                elif 'Authorization' in auth_data:
+                    auth_val = auth_data['Authorization']
+                    if auth_val.startswith('Bearer '):
+                        token = auth_val.split(' ')[1]
+                        logger.info("Token extraído de auth.Authorization")
 
             if not token:
-                logger.warning("Token de WebSocket no encontrado en los headers (Authorization: Bearer ...)")
+                logger.warning("Token de WebSocket no encontrado en headers ni en auth")
                 disconnect()
-                return
+                return False
 
             payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])  # type: ignore
             user_id = payload["sub"]
-            logger.info(f"JWT decodificado, id del user: {user_id}")
+            logger.info(f"JWT decodificado para WebSocket, id del user: {user_id}")
 
             file_manager = FileManager()
             encryption_manager = EncryptionManager()
@@ -97,20 +108,20 @@ def socket_token_required(f):
             if not current_user:
                 logger.warning(f"Usuario no encontrado: {user_id}")
                 disconnect()
-                return
+                return False
 
             return f(current_user, *args, **kwargs)
 
         except jwt.ExpiredSignatureError:
             logger.warning("Token del WebSocket ha expirado")
             disconnect()
+            return False
         except jwt.InvalidTokenError as e:
             logger.warning(f"Token del WebSocket es inválido: {e}")
             disconnect()
-        except KeyError:
-            logger.warning("Header 'Authorization' no encontrado para la conexión WebSocket.")
-            disconnect()
+            return False
         except Exception as e:
-            logger.warning(f"Error inesperado durante validación de WebSocket: {str(e)}")
+            logger.error(f"Error inesperado durante validación de WebSocket: {str(e)}", exc_info=True)
             disconnect()
+            return False
     return decorated_function

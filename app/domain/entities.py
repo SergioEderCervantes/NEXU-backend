@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, model_validator
 from typing import Any, Optional, List
 from app.config.settings import Config
 from app.utils.hashing import hash_password
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 class DbFile(Enum):
@@ -36,7 +36,7 @@ class User(BaseEntity):
     is_active: bool = True
     career: Optional[str] = None
     gender: Optional[str] = None
-    date_of_birth: Optional[datetime] = None
+    date_of_birth: Optional[date] = None
     bio: Optional[str] = None
     skills: List[str] = Field(default_factory=list)
     avatar_url: Optional[str] = "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
