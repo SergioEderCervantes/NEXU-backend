@@ -193,7 +193,9 @@ class ChatService:
         Returns:
             A list of chats, sorted by the most recent message.
         """
+        logger.debug(f"Intentando encontrar chats del user: {user_id}")
         chats = self.chat_repository.find_all_by_user(user_id)
+        logger.debug(f"Chats del userid: {len(chats)}")
         response = []
 
         for chat in chats:
@@ -209,6 +211,15 @@ class ChatService:
             unread_count = self.message_repository.count_unread_by_chat(
                 chat.id, user_id
             )
+            
+            last_message = self.message_repository.find_last_by_conversation_id(chat.id)
+            
+            last_message_data = None
+            if last_message:
+                last_message_data = {
+                    "content": last_message.content,
+                    "timestamp": last_message.timestamp.isoformat()
+                }
 
             response.append(
                 {
@@ -220,6 +231,7 @@ class ChatService:
                         "is_active": other_user.is_active,
                     },
                     "unread_messages": unread_count,
+                    "last_message": last_message_data,
                 }
             )
 
@@ -231,6 +243,10 @@ class ChatService:
     def load_chat_msgs(self, chat:Chat, user:User | str):
         messages = self.message_repository.find_by_conversation_id(chat.id)
         return messages
+    
+    def get_all(self):
+        chats = self.chat_repository.find_all()
+        return chats
 
 # Initialize dependencies for the ChatService
 file_manager = FileManager()
