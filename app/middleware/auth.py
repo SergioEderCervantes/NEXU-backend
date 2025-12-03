@@ -71,15 +71,12 @@ def socket_token_required(f):
             logger.info("Iniciando validación de token para WebSocket")
             token = None
             
-            # Try to get token from different sources
-            # 1. From extraHeaders (HTTP_AUTHORIZATION in environ)
             if 'HTTP_AUTHORIZATION' in request.environ:
                 auth_header = request.environ['HTTP_AUTHORIZATION']
                 if auth_header.startswith('Bearer '):
                     token = auth_header.split(' ')[1]
                     logger.info("Token extraído de HTTP_AUTHORIZATION")
             
-            # 2. From auth parameter (if frontend sends it via socket.io auth)
             if not token and len(args) > 0 and isinstance(args[0], dict):
                 auth_data = args[0]
                 if 'token' in auth_data:
