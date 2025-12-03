@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, g
 import logging
 from app.middleware.auth import token_required
 from app.application.ChatService import chat_service
-
+from app.domain.entities import Message
 logger = logging.getLogger("app")
 
 # Create the Blueprint
@@ -26,3 +26,32 @@ def get_user_chats():
         return jsonify(
             {"error": "Ocurrió un error inesperado al obtener los chats."}
         ), 500
+
+@chats_bp.route("/<chat_id>", methods=["GET"])
+@token_required
+def get_chat_messages(chat_id):
+    """
+    Get all messages for a specific chat, sorted by timestamp.
+    The user must be a participant in the chat to access its messages.
+    """
+    try:
+        current_user_id = g.current_user.id
+        
+        # Verify the user is part of this chat
+        chat = chat_service.chat_repository.find_by_id(chat_id)
+        if not chat:
+            logger.warning(f"Chat {chat_id} not found.")
+            return jsonify({"error": "Chat no encontrado."}), 404
+        
+        # Check if current user is a participant
+        if current_user_id not in [chat.user_a, chat.user_b]:
+            logger.warning(f"User {current_user_id} attempted to access chat {chat_id} without permission.")
+            return jsonify({"error": "No tienes permiso para acceder a este chat."}), 403
+        
+        messages: list[Message] = chat_service.load_chat_msgs(chat, current_user_id)
+        messages_dict = [message.model_dump() for message in messages]
+        return jsonify({"data": messages_dict }), 200
+        
+    except Exception as e:
+        logger.error(f"server error: {e}")
+        return jsonify({"error": "Ha ocurrido un error inesperado"})

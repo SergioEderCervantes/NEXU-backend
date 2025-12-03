@@ -228,6 +228,9 @@ class ChatService:
 
         return response
 
+    def load_chat_msgs(self, chat:Chat, user:User | str):
+        messages = self.message_repository.find_by_conversation_id(chat.id)
+        return messages
 
 # Initialize dependencies for the ChatService
 file_manager = FileManager()

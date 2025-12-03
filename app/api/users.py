@@ -35,15 +35,20 @@ def get_all_users():
         ), 500
 
 
-@users_bp.route("/me", methods=["GET"])
+@users_bp.route("/me", methods=["GET", "PUT"])
 @token_required
 def get_current_user():
     """
     Get the profile of the currently logged-in user. Requires a valid token.
     """
-    # The user object is attached to Flask's global `g` object by the decorator.
-    current_user = g.current_user
-    return jsonify({"data": current_user.model_dump(exclude={'password'})}), 200
+    if request.method == "GET":
+        # The user object is attached to Flask's global `g` object by the decorator.
+        current_user = g.current_user
+        return jsonify({"data": current_user.model_dump(exclude={'password'})}), 200
+    elif request.method == "PUT":
+        return jsonify("Metodo put triggereado"), 200
+    else:
+        return jsonify({"error": "method not allowed"}), 405
 
 
 @users_bp.route("/signup", methods=["POST"])
