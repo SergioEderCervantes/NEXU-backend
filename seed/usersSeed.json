@@ -1,3 +1,30 @@
 {
-  "users": []
+  "users": [
+    {
+      "id": "98c1c991-2f73-49c7-916d-2418dbe4192d",
+      "name": "Jostino",
+      "email": "admin3@hotmail.com",
+      "password": "admin",
+      "is_active": true,
+      "career": "ISC",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "bio": "Hola soy Jostino el Langostino",
+      "skills": ["Python", "Flask", "JavaScript", "React"],
+      "avatar_url": "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
+    },
+    {
+      "id": "fe8118e9-a99b-4730-be81-c0774e97a4f4",
+      "name": "Elias",
+      "email": "admin@hotmail.com",
+      "password": "admin",
+      "is_active": true,
+      "career": "ISC",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "bio": "Hola soy Elias",
+      "skills": ["Python", "Flask", "JavaScript", "React"],
+      "avatar_url": "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
+    }
+  ]
 }

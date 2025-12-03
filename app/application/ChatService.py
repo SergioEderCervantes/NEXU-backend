@@ -229,6 +229,7 @@ class ChatService:
                         "id": other_user.id,
                         "name": other_user.name,
                         "is_active": other_user.is_active,
+                            "avatar_url": other_user.avatar_url,
                     },
                     "unread_messages": unread_count,
                     "last_message": last_message_data,

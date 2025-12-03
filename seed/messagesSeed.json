@@ -1,3 +1,36 @@
 {
-    "messages":[]
+    "messages": [
+        {
+            "id": "msg1",
+            "conversation_id": "98c1c991-2f73-49c7-916d-2418dbe4192d-fe8118e9-a99b-4730-be81-c0774e97a4f4",
+            "sender_id": "fe8118e9-a99b-4730-be81-c0774e97a4f4",
+            "content": "Hola Jostino",
+            "timestamp": "2025-12-03T00:00:00",
+            "delivered": true
+        },
+        {
+            "id": "msg2",
+            "conversation_id": "98c1c991-2f73-49c7-916d-2418dbe4192d-fe8118e9-a99b-4730-be81-c0774e97a4f4",
+            "sender_id": "98c1c991-2f73-49c7-916d-2418dbe4192d",
+            "content": "Hola Elias!",
+            "timestamp": "2025-12-03T00:05:00",
+            "delivered": true
+        },
+        {
+            "id": "msg3",
+            "conversation_id": "98c1c991-2f73-49c7-916d-2418dbe4192d-fe8118e9-a99b-4730-be81-c0774e97a4f4",
+            "sender_id": "fe8118e9-a99b-4730-be81-c0774e97a4f4",
+            "content": "Como estas",
+            "timestamp": "2025-12-03T00:06:00",
+            "delivered": true
+        },
+        {
+            "id": "msg4",
+            "conversation_id": "98c1c991-2f73-49c7-916d-2418dbe4192d-fe8118e9-a99b-4730-be81-c0774e97a4f4",
+            "sender_id": "98c1c991-2f73-49c7-916d-2418dbe4192d",
+            "content": "Bien y tu?",
+            "timestamp": "2025-12-03T00:07:00",
+            "delivered": true
+        }
+    ]
 }
