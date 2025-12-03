@@ -47,7 +47,7 @@ class ChatRepository(BaseRepository[Chat]):
         sorted_users = sorted([user_id_1, user_id_2])
         chat_id = f"{sorted_users[0]}-{sorted_users[1]}"
         return self.find_by_id(chat_id)
-
+    
     def find_all_by_user(self, user_id: str) -> List[Chat]:
         """
         Finds all chats where the given user is a participant (either user_a or user_b).
@@ -59,14 +59,20 @@ class ChatRepository(BaseRepository[Chat]):
             List[Chat]: A list of chats involving the user.
         """
         data = self._get_data()
-        # Correct JSONPath query using the union operator `|` to combine two separate filters.
-        query = (f'$.{self.entity_name}[?(@.user_a == "{user_id}")] | '
-                 f'$.{self.entity_name}[?(@.user_b == "{user_id}")]')
-        jsonpath_expression = parse(query)
-        matches = jsonpath_expression.find(data)
-        
-        # The union can produce duplicates if a user somehow chats with themselves.
-        # We can remove duplicates by checking IDs.
-        unique_matches = {match.value['id']: match.value for match in matches}.values()
-        
-        return [self._to_entity(value) for value in unique_matches]
+
+        # Hacemos dos queries independientes porque jsonpath_ng NO soporta OR ni '|'
+        q_a = parse(f'$.{self.entity_name}[?(@.user_a == "{user_id}")]')
+        q_b = parse(f'$.{self.entity_name}[?(@.user_b == "{user_id}")]')
+
+        matches = q_a.find(data) + q_b.find(data)
+
+        # Eliminar duplicados usando el id del chat
+        unique_by_id = {}
+        for m in matches:
+            value = m.value
+            chat_id = value.get("id")
+            if chat_id:
+                unique_by_id[chat_id] = value
+
+        # Convertir a entidades internas
+        return [self._to_entity(chat_dict) for chat_dict in unique_by_id.values()]

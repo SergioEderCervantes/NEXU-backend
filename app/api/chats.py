@@ -17,6 +17,7 @@ def get_user_chats():
     For each chat, details of the other participant and a count of unread
     messages are included.
     """
+    logger.info("Iniciando conteo de chats")
     try:
         current_user_id = g.current_user.id
         chats_data = chat_service.get_chats_for_user(current_user_id)
@@ -55,3 +56,9 @@ def get_chat_messages(chat_id):
     except Exception as e:
         logger.error(f"server error: {e}")
         return jsonify({"error": "Ha ocurrido un error inesperado"})
+    
+@chats_bp.route("/all", methods=["GET"])
+def get_all():
+    chats = chat_service.get_all()
+    chats_dict = [chat.model_dump() for chat in chats]
+    return jsonify({"data": chats_dict}), 200

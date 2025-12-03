@@ -83,3 +83,20 @@ class MessageRepository(BaseRepository[Message]):
         jsonpath_expression = parse(query)
         matches = jsonpath_expression.find(data)
         return len(matches)
+
+    def find_last_by_conversation_id(self, conversation_id: str) -> Message | None:
+        """
+        Finds the last message in a conversation, sorted by timestamp.
+
+        Args:
+            conversation_id (str): The ID of the conversation.
+
+        Returns:
+            Message | None: The last message in the conversation, or None if no messages are found.
+        """
+        messages = self.find_many_by_attribute('conversation_id', conversation_id)
+        if not messages:
+            return None
+        # Sort messages by timestamp
+        messages.sort(key=lambda x: x.timestamp, reverse=True)
+        return messages[0]
