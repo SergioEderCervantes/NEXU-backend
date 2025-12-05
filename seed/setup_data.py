@@ -63,9 +63,23 @@ def load_tags():
 
     file_manager.write_file(DbFile.TAGS, encrypted_data)
 
+def load_posts():
+    with open(os.path.join(os.path.dirname(__file__), "postsSeed.json"), "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    json_data = json.dumps(data)
+
+    enc_manager = EncryptionManager()
+    file_manager = FileManager()
+
+    encrypted_data = enc_manager.encrypt_data(json_data)
+
+    file_manager.write_file(DbFile.POSTS, encrypted_data)
+
 
 if __name__ == "__main__":
     load_users()
     load_chats()
     load_messages()
     load_tags()
+    load_posts()

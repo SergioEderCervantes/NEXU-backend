@@ -378,3 +378,91 @@ curl -X POST \
     ```
     Api Funcionando en Flask!!
     ```
+
+---
+
+## 10. Get All Posts
+
+**Endpoint:** `GET /posts/`
+
+**Description:** Retrieves all posts for the feed, enriched with user and tag information.
+
+**Authentication:** Required. A valid JSON Web Token (JWT) must be provided in the `Authorization` header as a Bearer token.
+
+**Request:**
+*   **Method:** `GET`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** An array of enriched post objects.
+    ```json
+    {
+        "data": [
+            {
+                "id": "post-1",
+                "description": "¡Hola a todos! Estoy buscando a alguien para pasear a mi perro los fines de semana. ¿A alguien le interesa?",
+                "timestamp": "2025-12-05T10:00:00Z",
+                "user": {
+                    "id": "98c1c991-2f73-49c7-916d-2418dbe4192d",
+                    "name": "Jostino",
+                    "career": "ISC",
+                    "avatar_url": "https://res.cloudinary.com/..."
+                },
+                "tag": {
+                    "id": "29a09700-ba37-4a48-b870-273fbe417867",
+                    "name": "Amante de los animales",
+                    "icon": "PawPrint"
+                }
+            },
+            ...
+        ]
+    }
+    ```
+*   **Error (500 Internal Server Error):**
+    ```json
+    {
+        "error": "Ocurrió un error inesperado al obtener las publicaciones."
+    }
+    ```
+
+---
+
+## 11. Create Post
+
+**Endpoint:** `POST /posts/`
+
+**Description:** Creates a new post.
+
+**Authentication:** Required. A valid JSON Web Token (JWT) must be provided in the `Authorization` header as a Bearer token.
+
+**Request:**
+*   **Method:** `POST`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+    *   `Content-Type: application/json`
+*   **Body (JSON):**
+    ```json
+    {
+        "tag_id": "29a09700-ba37-4a48-b870-273fbe417867",
+        "description": "¡Este es un nuevo post de prueba!"
+    }
+    ```
+
+**Response:**
+*   **Success (201 Created):**
+    *   **Body:** The newly created post object (un-enriched).
+    ```json
+    {
+        "data": {
+            "id": "new-post-id",
+            "user_id": "authenticated-user-id",
+            "tag_id": "29a09700-ba37-4a48-b870-273fbe417867",
+            "description": "¡Este es un nuevo post de prueba!",
+            "timestamp": "2025-12-05T15:30:00.123456Z"
+        }
+    }
+    ```
+*   **Error (400 Bad Request):** If `tag_id` or `description` are missing from the request body.
+*   **Error (500 Internal Server Error):** For unexpected issues during post creation.

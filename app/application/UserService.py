@@ -76,6 +76,8 @@ class UserService:
             user.date_of_birth = data["date_of_birth"]
         if "tag_ids" in data:
             user.tag_ids = data["tag_ids"]
+        if "gender" in data:
+            user.gender = data["gender"]
 
         self.user_repository.update(user)
         logger.info(f"Successfully updated profile for user {user_id}")

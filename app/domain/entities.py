@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, model_validator
 from typing import Any, Optional, List
 from app.config.settings import Config
 from app.utils.hashing import hash_password
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 import uuid
 
 class DbFile(Enum):
@@ -63,7 +63,7 @@ class User(BaseEntity):
 class Chat(BaseEntity):
     user_a: str
     user_b: str
-    last_message_at: datetime = Field(default_factory=datetime.now)
+    last_message_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     @model_validator(mode='before')
     @classmethod
@@ -89,5 +89,11 @@ class Message(BaseEntity):
     conversation_id: str
     sender_id: str
     content: str
-    timestamp: datetime = Field(default_factory=datetime.now)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     delivered: bool
+
+class Post(BaseEntity):
+    user_id: str
+    tag_id:str
+    description:str
+    timestamp:datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
