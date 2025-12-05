@@ -177,6 +177,7 @@ class ChatService:
                 "sender_id": sender.id,
                 "sender_name": sender.name,
                 "message": message.content,
+                "message_id": message.id
             },
             to=reciever.id,
         )
