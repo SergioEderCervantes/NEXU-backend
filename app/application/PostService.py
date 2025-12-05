@@ -20,12 +20,18 @@ class PostService:
         self.user_repository = user_repository
         self.tag_repository = tag_repository
 
-    def get_all_posts_for_feed(self) -> List[Dict[str, Any]]:
+    def get_all_posts_for_feed(self, tag_id: str | None = None ) -> List[Dict[str, Any]]:
         """
         Retrieves all posts and enriches them with user and tag information for the feed.
+        If a tag_id is provided, it filters the posts by that tag.
         """
         logger.info("Retrieving all posts for the feed.")
-        posts = self.post_repository.find_all()
+        if tag_id:
+            logger.info(f"Filtering posts by tag_id: {tag_id}")
+            posts = self.post_repository.find_many_by_attribute('tag_id', tag_id)
+        else:
+            posts = self.post_repository.find_all()
+
         users = self.user_repository.find_all()
         tags = self.tag_repository.find_all()
 

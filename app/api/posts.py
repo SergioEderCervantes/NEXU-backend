@@ -13,10 +13,12 @@ posts_bp = Blueprint("posts", __name__, url_prefix="/posts")
 def get_posts():
     """
     Get all posts for the feed, enriched with user and tag information.
+    Optionally filters posts by tag_id if a 'filter=tag_id' query parameter is provided.
     Requires a valid token.
     """
     try:
-        feed = post_service.get_all_posts_for_feed()
+        tag_id_filter = request.args.get('filter')
+        feed = post_service.get_all_posts_for_feed(tag_id=tag_id_filter)
         return jsonify({"data": feed}), 200
     except Exception as e:
         logger.error(f"Error retrieving posts for feed: {e}", exc_info=True)

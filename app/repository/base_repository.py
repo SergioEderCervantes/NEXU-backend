@@ -100,6 +100,23 @@ class BaseRepository(ABC, Generic[T]):
             return self._to_entity(matches[0].value)
         return None
 
+    def find_many_by_attribute(self, attribute: str, value) -> List[T]:
+        """
+        Finds all entities by a specific attribute and its value.
+
+        Args:
+            attribute (str): The name of the attribute to search by.
+            value: The value of the attribute to match.
+
+        Returns:
+            List[T]: A list of found entities.
+        """
+        data = self._get_data()
+        query_value = f'"{value}"' if isinstance(value, str) else value
+        jsonpath_expression = parse(f'$.{self.entity_name}[?(@.{attribute} == {query_value})]')
+        matches = jsonpath_expression.find(data)
+        return [self._to_entity(match.value) for match in matches]
+
     def find_by_id(self, entity_id: str) -> Optional[T]:
         """
         Finds an entity by its unique ID.

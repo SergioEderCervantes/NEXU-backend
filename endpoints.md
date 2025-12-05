@@ -133,12 +133,14 @@ This document outlines the usage of the user-related API endpoints.
     *   **Body:** The user object (password excluded).
     ```json
     {
-        "data": {
-            "id": "some-user-id",
-            "name": "Another User",
-            "email": "another@example.com",
-            ...
-        }
+        "data": [
+            {
+                "id": "some-user-id",
+                "name": "Another User",
+                "email": "another@example.com",
+                ...
+            }
+        ]
     }
     ```
 *   **Error (404 Not Found):** If the user is not found.
@@ -437,6 +439,8 @@ curl -X POST \
 **Endpoint:** `GET /posts/`
 
 **Description:** Retrieves all posts for the feed, enriched with user and tag information.
+**Query Parameters:**
+*   `filter` (optional): If provided, filters posts by the given `tag_id`. Example: `GET /posts/?filter=some_tag_id`
 
 **Authentication:** Required. A valid JSON Web Token (JWT) must be provided in the `Authorization` header as a Bearer token.
 
