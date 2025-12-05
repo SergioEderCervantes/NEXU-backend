@@ -1,12 +1,14 @@
 {
     "posts": [
         {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
             "user_id": "98c1c991-2f73-49c7-916d-2418dbe4192d",
             "tag_id": "29a09700-ba37-4a48-b870-273fbe417867",
             "description": "¡Hola a todos! Estoy buscando a alguien para pasear a mi perro los fines de semana. ¿A alguien le interesa?",
             "timestamp": "2025-12-05T10:00:00Z"
         },
         {
+            "id": "550e8400-e29b-41d4-a716-446655440001",
             "user_id": "fe8118e9-a99b-4730-be81-c0774e97a4f4",
             "tag_id": "f5992546-98b1-4a06-8e93-78ca74c9cc3e",
             "description": "Busco gente para jugar unas partidas de Valorant. Dejen sus nicks.",

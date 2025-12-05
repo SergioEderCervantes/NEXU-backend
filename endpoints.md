@@ -115,7 +115,38 @@ This document outlines the usage of the user-related API endpoints.
 
 ---
 
-## 3. User Signup
+## 3. Get User by ID
+
+**Endpoint:** `GET /users/<user_id>`
+
+**Description:** Get details of a specific user by their ID.
+
+**Authentication:** Required. A valid JWT must be provided in the `Authorization` header.
+
+**Request:**
+*   **Method:** `GET`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** The user object (password excluded).
+    ```json
+    {
+        "data": {
+            "id": "some-user-id",
+            "name": "Another User",
+            "email": "another@example.com",
+            ...
+        }
+    }
+    ```
+*   **Error (404 Not Found):** If the user is not found.
+*   **Error (500 Internal Server Error):** For unexpected issues.
+
+---
+
+## 4. User Signup
 
 **Endpoint:** `POST /users/signup`
 
@@ -151,7 +182,7 @@ This document outlines the usage of the user-related API endpoints.
 
 ---
 
-## 4. User Login
+## 5. User Login
 
 **Endpoint:** `POST /users/login`
 
@@ -185,7 +216,7 @@ This document outlines the usage of the user-related API endpoints.
 
 ---
 
-## 5. Upload User Avatar
+## 6. Upload User Avatar
 
 **Endpoint:** `POST /users/upload_avatar`
 
@@ -225,21 +256,11 @@ curl -X POST \
     }
     ```
 *   **Error (400 Bad Request):** If the `avatar` file part is missing or the file has no name.
-    ```json
-    {
-        "error": "No se encontró el archivo del avatar en la solicitud."
-    }
-    ```
 *   **Error (500 Internal Server Error):** For unexpected issues during the upload process.
-    ```json
-    {
-        "error": "Ocurrió un error desconocido al cambiar el avatar."
-    }
-    ```
 
 ---
 
-## 6. Get All Tags
+## 7. Get All Tags
 
 **Endpoint:** `GET /tags/`
 
@@ -277,7 +298,7 @@ curl -X POST \
 
 ---
 
-## 7. Get User Chats
+## 8. Get User Chats
 
 **Endpoint:** `GET /chats/`
 
@@ -324,7 +345,37 @@ curl -X POST \
 
 ---
 
-## 8. Get Chat Messages
+## 9. Get All Chats (Admin)
+
+**Endpoint:** `GET /chats/all`
+
+**Description:** Retrieves a list of all chats in the system. (Primarily for admin/debugging purposes).
+
+**Authentication:** None.
+
+**Request:**
+*   **Method:** `GET`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** An array of all chat objects.
+    ```json
+    {
+        "data": [
+            {
+                "id": "chat-id-1",
+                "user_a": "user-a-id",
+                "user_b": "user-b-id",
+                "last_message_at": "2025-12-05T10:00:00Z"
+            },
+            ...
+        ]
+    }
+    ```
+
+---
+
+## 10. Get Chat Messages
 
 **Endpoint:** `GET /chats/<chat_id>`
 
@@ -361,7 +412,7 @@ curl -X POST \
 
 ---
 
-## 9. Health Check
+## 11. Health Check
 
 **Endpoint:** `GET /health/`
 
@@ -381,7 +432,7 @@ curl -X POST \
 
 ---
 
-## 10. Get All Posts
+## 12. Get All Posts
 
 **Endpoint:** `GET /posts/`
 
@@ -429,7 +480,7 @@ curl -X POST \
 
 ---
 
-## 11. Create Post
+## 13. Create Post
 
 **Endpoint:** `POST /posts/`
 
@@ -466,3 +517,29 @@ curl -X POST \
     ```
 *   **Error (400 Bad Request):** If `tag_id` or `description` are missing from the request body.
 *   **Error (500 Internal Server Error):** For unexpected issues during post creation.
+
+---
+
+## 14. Delete Post
+
+**Endpoint:** `DELETE /posts/<post_id>`
+
+**Description:** Deletes a post by its ID. Only the owner of the post can delete it.
+
+**Authentication:** Required. A valid JSON Web Token (JWT) must be provided in the `Authorization` header as a Bearer token.
+
+**Request:**
+*   **Method:** `DELETE`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+
+**Response:**
+*   **Success (200 OK):**
+    ```json
+    {
+        "message": "Publicación eliminada exitosamente."
+    }
+    ```
+*   **Error (403 Forbidden):** If the user is not authorized to delete the post.
+*   **Error (404 Not Found):** If the post is not found.
+*   **Error (500 Internal Server Error):** For unexpected issues during post deletion.

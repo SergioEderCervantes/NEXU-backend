@@ -71,6 +71,23 @@ class PostService:
         logger.info(f"Successfully created post {post.id} for user {user_id}.")
         return post
 
+    def delete_post(self, post_id: str, user_id: str) -> bool:
+        """
+        Deletes a post if the provided user_id is the owner of the post.
+        """
+        logger.info(f"Attempting to delete post {post_id} by user {user_id}.")
+        post = self.post_repository.find_by_id(post_id)
+
+        if not post:
+            logger.warning(f"Post {post_id} not found for deletion.")
+            return False
+
+        if post.user_id != user_id:
+            logger.warning(f"User {user_id} is not authorized to delete post {post_id}.")
+            raise ValueError("User is not authorized to delete this post.")
+
+        return self.post_repository.delete(post_id)
+
 
 # Dependency-injected instance of the service
 

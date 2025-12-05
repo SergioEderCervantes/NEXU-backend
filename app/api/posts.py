@@ -46,3 +46,22 @@ def create_post():
     except Exception as e:
         logger.error(f"Error creating post: {e}", exc_info=True)
         return jsonify({"error": "Ocurrió un error inesperado al crear la publicación."}), 500
+
+@posts_bp.route("/<post_id>", methods=["DELETE"])
+@token_required
+def delete_post(post_id):
+    """
+    Deletes a post by its ID.
+    Requires a valid token and the user must be the owner of the post.
+    """
+    try:
+        current_user_id = g.current_user.id
+        if post_service.delete_post(post_id, current_user_id):
+            return jsonify({"message": "Publicación eliminada exitosamente."}), 200
+        else:
+            return jsonify({"error": "Publicación no encontrada."}), 404
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 403 # Forbidden
+    except Exception as e:
+        logger.error(f"Error deleting post {post_id}: {e}", exc_info=True)
+        return jsonify({"error": "Ocurrió un error inesperado al eliminar la publicación."}), 500
