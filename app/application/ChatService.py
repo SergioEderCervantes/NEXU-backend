@@ -9,6 +9,7 @@ from flask_socketio import join_room, emit, send
 from app.extensions import socketio
 from datetime import datetime
 import logging
+from app.repository.tag_repository import TagRepository
 
 logger = logging.getLogger('app')
 
@@ -250,13 +251,17 @@ class ChatService:
         chats = self.chat_repository.find_all()
         return chats
 
+
+
+
 # Initialize dependencies for the ChatService
 file_manager = FileManager()
 encryption_manager = EncryptionManager()
 user_repository = UserRepository(file_manager, encryption_manager)
 chat_repository = ChatRepository(file_manager, encryption_manager)
 message_repository = MessageRepository(file_manager, encryption_manager)
-user_service = UserService(user_repository)
+tag_repository = TagRepository(file_manager, encryption_manager)
+user_service = UserService(user_repository, tag_repository)
 
 chat_service = ChatService(
     user_repository, chat_repository, message_repository, user_service

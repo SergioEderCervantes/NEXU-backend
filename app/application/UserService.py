@@ -46,9 +46,11 @@ class UserService:
         
         all_tags = self._get_all_tags()
         tags_map = {tag.id: tag.name for tag in all_tags}
-        
+
         # Replace tag_ids with the actual names
-        tag_names = [tags_map.get(tag_id) for tag_id in user.tag_ids if tag_id in tags_map]
+        tag_names = [tags_map.get(tag_id) for tag_id in user.tag_ids]
+
+            
         user_dict['tags'] = tag_names
         del user_dict['tag_ids']  # Remove the original tag_ids field
         

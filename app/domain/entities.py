@@ -29,9 +29,9 @@ class BaseEntity(BaseModel):
         return data    
 
 class Tag(BaseEntity):
-    name: str = Field(alias='nombre')
-    icon: str = Field(alias='icono')
-    description: str = Field(alias='descripcion')
+    name: str
+    icon: str
+    description: str
 
 class User(BaseEntity):
     name: str

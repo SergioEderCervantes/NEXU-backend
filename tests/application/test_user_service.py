@@ -9,9 +9,14 @@ def mock_user_repository():
     return MagicMock()
 
 @pytest.fixture
-def user_service(mock_user_repository):
+def mock_tag_repository():
+    """Fixture to create a mock tag repository."""
+    return MagicMock()
+
+@pytest.fixture
+def user_service(mock_user_repository, mock_tag_repository):
     """Fixture to create a UserService with a mock repository."""
-    return UserService(mock_user_repository)
+    return UserService(mock_user_repository, mock_tag_repository)
 
 def test_get_all_users(user_service, mock_user_repository):
     """

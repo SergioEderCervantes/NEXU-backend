@@ -10,7 +10,7 @@
       "gender": "Male",
       "date_of_birth": "1990-05-15",
       "bio": "Hola soy Jostino el Langostino",
-      "tags": ["29a09700-ba37-4a48-b870-273fbe417867", "268ff923-40f9-40d7-a401-ab61c88f4f2f", "ed9a440c-070f-4e19-9357-a9f41eaf66de"],
+      "tag_ids": ["29a09700-ba37-4a48-b870-273fbe417867", "268ff923-40f9-40d7-a401-ab61c88f4f2f", "ed9a440c-070f-4e19-9357-a9f41eaf66de"],
       "avatar_url": "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
     },
     {
@@ -23,7 +23,7 @@
       "gender": "Male",
       "date_of_birth": "1990-05-15",
       "bio": "Hola soy Elias",
-      "tags": ["29a09700-ba37-4a48-b870-273fbe417867"],
+      "tag_ids": ["29a09700-ba37-4a48-b870-273fbe417867"],
       "avatar_url": "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
     }
   ]

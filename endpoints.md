@@ -40,28 +40,33 @@ This document outlines the usage of the user-related API endpoints.
 
 ---
 
-## 2. Get Current User Profile
+## 2. Get or Update Current User Profile
 
-**Endpoint:** `GET /users/me`
+**Endpoint:** 
+- `GET /users/me`
+- `PUT /users/me`
 
-**Description:** Retrieves the profile information of the currently authenticated user.
+**Description:** 
+- **GET:** Retrieves the profile information of the currently authenticated user.
+- **PUT:** Updates the profile information of the currently authenticated user.
 
 **Authentication:** Required. A valid JWT must be provided in the `Authorization` header.
 
-**Request:**
+### GET Request
 *   **Method:** `GET`
 *   **Headers:**
     *   `Authorization: Bearer <your_access_token>`
 
 **Response:**
 *   **Success (200 OK):**
-    *   **Body:** A single user object.
+    *   **Body:** A single user object with populated tag names.
     ```json
     {
         "data": {
             "id": "293847",
             "name": "Eder",
             "email": "al0293847@example.com",
+            "tags": ["Programación", "Diseño Gráfico"],
             ...
         }
     }
@@ -72,6 +77,41 @@ This document outlines the usage of the user-related API endpoints.
         "error": "Token is missing or invalid!"
     }
     ```
+
+### PUT Request
+*   **Method:** `PUT`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+    *   `Content-Type: application/json`
+*   **Body (JSON):**
+    A JSON object containing the fields to update. Only `name`, `career`, `date_of_birth`, and `tag_ids` are updatable.
+    ```json
+    {
+        "name": "Eder Updated",
+        "career": "Software Engineer",
+        "date_of_birth": "2000-01-01",
+        "tag_ids": ["29a09700-ba37-4a48-b870-273fbe417867"]
+    }
+    ```
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** The updated user object with populated tag names.
+    ```json
+    {
+        "data": {
+            "id": "293847",
+            "name": "Eder Updated",
+            "email": "al0293847@example.com",
+            "career": "Software Engineer",
+            "tags": ["Programación"],
+            ...
+        }
+    }
+    ```
+*   **Error (400 Bad Request):** If the request body is missing or not a valid JSON.
+*   **Error (404 Not Found):** If the user is not found.
+*   **Error (500 Internal Server Error):** For unexpected issues.
 
 ---
 
@@ -195,4 +235,146 @@ curl -X POST \
     {
         "error": "Ocurrió un error desconocido al cambiar el avatar."
     }
+    ```
+
+---
+
+## 6. Get All Tags
+
+**Endpoint:** `GET /tags/`
+
+**Description:** Retrieves a list of all available tags in the system.
+
+**Authentication:** Required. This endpoint needs a valid JSON Web Token (JWT) provided in the `Authorization` header as a Bearer token.
+
+**Request:**
+*   **Method:** `GET`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** An array of tag objects.
+    ```json
+    {
+        "data": [
+            {
+                "id": "29a09700-ba37-4a48-b870-273fbe417867",
+                "name": "Programación",
+                "icon": "Code",
+                "description": "Lenguajes de programación, desarrollo de software, algoritmos y estructuras de datos."
+            },
+            ...
+        ]
+    }
+    ```
+*   **Error (500 Internal Server Error):**
+    ```json
+    {
+        "error": "Ocurrió un error inesperado al obtener los tags."
+    }
+    ```
+
+---
+
+## 7. Get User Chats
+
+**Endpoint:** `GET /chats/`
+
+**Description:** Retrieves all chats for the currently authenticated user. For each chat, it includes details of the other participant and a count of unread messages.
+
+**Authentication:** Required. A valid JWT must be provided in the `Authorization` header.
+
+**Request:**
+*   **Method:** `GET`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** An array of chat objects.
+    ```json
+    {
+        "data": [
+            {
+                "id": "chat-id-1",
+                "last_message_at": "2025-12-05T10:00:00Z",
+                "other_user": {
+                    "id": "user-id-2",
+                    "name": "Other User",
+                    "is_active": true,
+                    "avatar_url": "https://example.com/avatar.png"
+                },
+                "unread_messages": 2,
+                "last_message": {
+                    "content": "Hello there!",
+                    "timestamp": "2025-12-05T10:00:00Z"
+                }
+            },
+            ...
+        ]
+    }
+    ```
+*   **Error (500 Internal Server Error):**
+    ```json
+    {
+        "error": "Ocurrió un error inesperado al obtener los chats."
+    }
+    ```
+
+---
+
+## 8. Get Chat Messages
+
+**Endpoint:** `GET /chats/<chat_id>`
+
+**Description:** Retrieves all messages for a specific chat, sorted by timestamp. The user must be a participant in the chat to access its messages.
+
+**Authentication:** Required. A valid JWT must be provided in the `Authorization` header.
+
+**Request:**
+*   **Method:** `GET`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** An array of message objects.
+    ```json
+    {
+        "data": [
+            {
+                "id": "message-id-1",
+                "conversation_id": "chat-id-1",
+                "sender_id": "user-id-1",
+                "content": "Hello!",
+                "timestamp": "2025-12-05T09:59:00Z",
+                "delivered": true
+            },
+            ...
+        ]
+    }
+    ```
+*   **Error (403 Forbidden):** If the user is not a participant of the chat.
+*   **Error (404 Not Found):** If the chat is not found.
+*   **Error (500 Internal Server Error):** For unexpected issues.
+
+---
+
+## 9. Health Check
+
+**Endpoint:** `GET /health/`
+
+**Description:** A simple endpoint to check if the API is running.
+
+**Authentication:** None.
+
+**Request:**
+*   **Method:** `GET`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** A simple text message.
+    ```
+    Api Funcionando en Flask!!
     ```
