@@ -39,14 +39,38 @@ def get_all_users():
 @token_required
 def get_current_user():
     """
-    Get the profile of the currently logged-in user. Requires a valid token.
+    Get or update the profile of the currently logged-in user. Requires a valid token.
+    For GET, returns the user profile with tag names.
+    For PUT, updates the user profile and returns the updated profile with tag names.
     """
     if request.method == "GET":
-        # The user object is attached to Flask's global `g` object by the decorator.
         current_user = g.current_user
-        return jsonify({"data": current_user.model_dump(exclude={'password'})}), 200
+        user_profile = user_service.get_user_profile(current_user)
+        return jsonify({"data": user_profile}), 200
+
     elif request.method == "PUT":
-        return jsonify("Metodo put triggereado"), 200
+        try:
+            data = request.get_json(silent=True)
+            if not data:
+                logger.warning(f"Update attempt for user {g.current_user.id} with no JSON data.")
+                return jsonify({"error": "Se requiere un cuerpo de solicitud JSON."}), 400
+
+            current_user = g.current_user
+            updated_user = user_service.update_user_profile(current_user.id, data)
+            
+            logger.info(f"Successfully updated profile for user {current_user.id}")
+            
+            # Return the populated profile
+            user_profile = user_service.get_user_profile(updated_user)
+            return jsonify({"data": user_profile}), 200
+            
+        except ValueError as e:
+            # This case might be rare if the token is always valid, but good practice.
+            logger.warning(f"Update failed for user {g.current_user.id}: {e}")
+            return jsonify({"error": str(e)}), 404
+        except Exception as e:
+            logger.error(f"Unexpected error updating profile for user {g.current_user.id}: {e}", exc_info=True)
+            return jsonify({"error": "Ocurrió un error inesperado al actualizar el perfil."}), 500
     else:
         return jsonify({"error": "method not allowed"}), 405
 

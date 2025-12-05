@@ -1,0 +1,184 @@
+{
+    "tags": [
+        {
+            "id": "29a09700-ba37-4a48-b870-273fbe417867",
+            "nombre": "Programación",
+            "icono": "Code",
+            "descripcion": "Lenguajes de programación, desarrollo de software, algoritmos y estructuras de datos."
+        },
+        {
+            "id": "f5992546-98b1-4a06-8e93-78ca74c9cc3e",
+            "nombre": "Matemáticas y Estadística",
+            "icono": "Sigma",
+            "descripcion": "Álgebra, cálculo, probabilidad, métodos de análisis y visualización de datos."
+        },
+        {
+            "id": "2c967e51-51b5-43f8-b561-edff16203f49",
+            "nombre": "Escritura y Redacción",
+            "icono": "Feather",
+            "descripcion": "Mejora de ensayos, informes académicos, técnicas de escritura creativa y periodística."
+        },
+        {
+            "id": "268ff923-40f9-40d7-a401-ab61c88f4f2f",
+            "nombre": "Investigación Académica",
+            "icono": "Search",
+            "descripcion": "Métodos de investigación, manejo de referencias, normas de citación (APA/MLA) y búsqueda de fuentes."
+        },
+        {
+            "id": "478ff9a1-8385-4f3d-ac67-451ec09445a5",
+            "nombre": "Aprendizaje de Idiomas",
+            "icono": "Globe",
+            "descripcion": "Intercambio de idiomas, práctica conversacional, gramática y preparación para certificaciones."
+        },
+        {
+            "id": "921cef22-a4c5-4be6-80dc-ce2a1c32d7cd",
+            "nombre": "Diseño Gráfico y Multimedia",
+            "icono": "Palette",
+            "descripcion": "Ilustración, edición de fotografía y video, manejo de herramientas (como Adobe) y composición visual."
+        },
+        {
+            "id": "2545feae-7de6-4ca9-8c73-3455e77aac6a",
+            "nombre": "Inteligencia Artificial (IA)",
+            "icono": "Brain",
+            "descripcion": "Machine Learning, redes neuronales, modelos generativos y automatización de procesos con IA."
+        },
+        {
+            "id": "a6a4d497-1377-4406-846d-4983301432d8",
+            "nombre": "Ciberseguridad",
+            "icono": "Shield",
+            "descripcion": "Hacking ético, protección de datos, privacidad en línea y seguridad de redes."
+        },
+        {
+            "id": "b8510827-76fc-47c2-9fe1-e2ffc20c688c",
+            "nombre": "Organización Personal / Productividad",
+            "icono": "Clipboard",
+            "descripcion": "Gestión de tiempo (Técnica Pomodoro, GTD), apps de notas y métodos de estudio efectivos."
+        },
+        {
+            "id": "b8927624-598b-4557-9ef7-cd7c7616b8f6",
+            "nombre": "Juegos de Mesa y Cartas",
+            "icono": "Dice6",
+            "descripcion": "Estrategia, juegos modernos (Eurogames, Legacy), rol (TTRPG) y reuniones para jugar."
+        },
+        {
+            "id": "ed9a440c-070f-4e19-9357-a9f41eaf66de",
+            "nombre": "Fotografía y Edición",
+            "icono": "Camera",
+            "descripcion": "Técnicas de captura, composición, postproducción y retoque digital (Lightroom/Photoshop)."
+        },
+        {
+            "id": "28891f5f-b53d-40b9-b834-449bfc291d7e",
+            "nombre": "Reparaciones y Bricolaje",
+            "icono": "Wrench",
+            "descripcion": "Arreglos caseros básicos, mantenimiento de gadgets, carpintería simple y proyectos DIY."
+        },
+        {
+            "id": "54e99ff2-e213-40f1-948f-7b0896558fee",
+            "nombre": "Inversiones (Bolsa, Cripto)",
+            "icono": "Wallet",
+            "descripcion": "Trading, análisis de mercados, inversión pasiva y manejo de criptomonedas."
+        },
+        {
+            "id": "417a510b-4531-495a-b90a-d1d2c7ed1397",
+            "nombre": "Habilidades Sociales / Conversación",
+            "icono": "MessageCircle",
+            "descripcion": "Consejos para romper el hielo, mejorar la comunicación y hacer nuevos amigos en la universidad."
+        },
+        {
+            "id": "1b200a29-ba5e-4865-a4ca-3761e1565ce2",
+            "nombre": "Música y Producción",
+            "icono": "Music",
+            "descripcion": "Tocar instrumentos, composición, teoría musical, mezcla y producción de audio."
+        },
+        {
+            "id": "da1db287-3513-4fd3-a6fa-0e026be61556",
+            "nombre": "Cine, Series y Crítica",
+            "icono": "Film",
+            "descripcion": "Análisis de películas, tendencias de plataformas, géneros y guionismo."
+        },
+        {
+            "id": "0daeaf1a-5c26-4ae0-a702-30eaeb4006a0",
+            "nombre": "Deportes y Fitness",
+            "icono": "Dumbbell",
+            "descripcion": "Rutinas de entrenamiento, nutrición, yoga, deportes de equipo y vida activa."
+        },
+        {
+            "id": "6bd5c64a-b14b-4059-a2f4-a7ad1c30727d",
+            "nombre": "Lectura y Literatura",
+            "icono": "BookOpen",
+            "descripcion": "Clubes de lectura, intercambio de libros, crítica literaria, poesía y ficción."
+        },
+        {
+            "id": "07732c49-2544-464b-9b42-af5947a34993",
+            "nombre": "Viajes y Aventura",
+            "icono": "Map",
+            "descripcion": "Planificación de rutas de bajo costo, mochileros, senderismo, exploración y cultura viajera."
+        },
+        {
+            "id": "7cb3c02a-0195-4be5-a4a1-68cbd725cbf1",
+            "nombre": "Voluntariado y Sostenibilidad",
+            "icono": "Heart",
+            "descripcion": "Proyectos sociales, activismo estudiantil, ecología, reciclaje y moda sostenible."
+        },
+        {
+            "id": "89daa763-f41f-4394-92e1-9bd1ee36fded",
+            "nombre": "Cocina y Gastronomía",
+            "icono": "Utensils",
+            "descripcion": "Recetas fáciles y saludables para estudiantes, cocina internacional y repostería."
+        },
+        {
+            "id": "6bcd6e00-d890-4845-8fcf-cb0637015ed0",
+            "nombre": "Salud Mental y Bienestar",
+            "icono": "Leaf",
+            "descripcion": "Manejo del estrés, meditación, técnicas de relajación y balance vida-estudio."
+        },
+        {
+            "id": "0918f776-8314-42ff-bf80-fd70e3bbb27c",
+            "nombre": "Videojuegos (Gaming)",
+            "icono": "Gamepad",
+            "descripcion": "Consolas, PC, esports, streaming, speedrunning y discusiones sobre la industria."
+        },
+        {
+            "id": "19eee1c7-8805-4c6f-86b2-008d0dae6e4d",
+            "nombre": "Café, Té y Barismo",
+            "icono": "Coffee",
+            "descripcion": "Apreciación del café y té, métodos de preparación, barismo casero y recomendaciones de cafeterías."
+        },
+        {
+            "id": "af0a8ce7-fbf5-4870-bb1e-705b15b515ff",
+            "nombre": "Mascotas y Cuidado Animal",
+            "icono": "PawPrint",
+            "descripcion": "Compartir experiencias con mascotas, consejos de cuidado, entrenamiento y temas de adopción."
+        },
+        {
+            "id": "d092a7b3-35ef-4418-ba34-8a8b9d7a2680",
+            "nombre": "Moda y Estilo Personal",
+            "icono": "Shirt",
+            "descripcion": "Tendencias, outfits, costura, compras inteligentes y moda de segunda mano."
+        },
+        {
+            "id": "ad10231a-6f9a-4ea9-8977-5beb405fe60e",
+            "nombre": "Cultura Friki (Geek)",
+            "icono": "Zap",
+            "descripcion": "Cómics, anime, manga, ciencia ficción, fantasía y coleccionismo de figuras."
+        },
+        {
+            "id": "8a77a8cb-916f-4e07-af66-b859a6d656ac",
+            "nombre": "Dibujo y Arte (Creatividad)",
+            "icono": "Pencil",
+            "descripcion": "Sketching, pintura, arte digital, ilustración y técnicas creativas."
+        },
+        {
+            "id": "c3ee920f-bcf8-4fc3-9945-fd57d6050386",
+            "nombre": "Marketing Digital / Redes",
+            "icono": "Share2",
+            "descripcion": "Creación de contenido, estrategias para redes sociales (TikTok, Instagram) y branding personal."
+        },
+        {
+            "id": "aa68902d-9194-4171-8892-f27ab290135d",
+            "nombre": "Plantas y Jardinería",
+            "icono": "Sprout",
+            "descripcion": "Cuidado de plantas de interior, huertos urbanos, propagación y terrarios."
+        }
+    ]
+}

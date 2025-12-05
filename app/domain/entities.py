@@ -11,7 +11,7 @@ class DbFile(Enum):
     USERS = os.path.join(Config.BASE_PATH, "Usuarios.json.enc")
     CHATS = os.path.join(Config.BASE_PATH, "Chats.json.enc")
     MESSAGES = os.path.join(Config.BASE_PATH, "Mensajes.json.enc")
-    SKILLS = os.path.join(Config.BASE_PATH, "Habilidades.json.enc")
+    POSTS = os.path.join(Config.BASE_PATH, "Publicaciones.json.enc")
     TAGS = os.path.join(Config.BASE_PATH, "Tags.json.enc")
     TEST = os.path.join(Config.BASE_PATH, "Test.json.enc")
 
@@ -28,6 +28,10 @@ class BaseEntity(BaseModel):
             data['id'] = str(uuid.uuid4())
         return data    
 
+class Tag(BaseEntity):
+    name: str = Field(alias='nombre')
+    icon: str = Field(alias='icono')
+    description: str = Field(alias='descripcion')
 
 class User(BaseEntity):
     name: str
@@ -38,7 +42,7 @@ class User(BaseEntity):
     gender: Optional[str] = None
     date_of_birth: Optional[date] = None
     bio: Optional[str] = None
-    skills: List[str] = Field(default_factory=list)
+    tag_ids: List[str] = Field(default_factory=list)
     avatar_url: Optional[str] = "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
 
     @model_validator(mode='before')
