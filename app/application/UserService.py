@@ -39,7 +39,7 @@ class UserService:
 
     def get_user_profile(self, user: User) -> dict:
         """
-        Returns a dictionary representation of the user with tag names populated
+        Returns a dictionary representation of the user with tag names and icons populated
         instead of tag IDs.
         """
         user_dict = user.model_dump(exclude={'password'})

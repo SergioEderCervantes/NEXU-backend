@@ -195,9 +195,7 @@ class ChatService:
         Returns:
             A list of chats, sorted by the most recent message.
         """
-        logger.debug(f"Intentando encontrar chats del user: {user_id}")
         chats = self.chat_repository.find_all_by_user(user_id)
-        logger.debug(f"Chats del userid: {len(chats)}")
         response = []
 
         for chat in chats:

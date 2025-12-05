@@ -2,183 +2,118 @@
     "tags": [
         {
             "id": "29a09700-ba37-4a48-b870-273fbe417867",
-            "name": "Programación",
-            "icon": "Code",
-            "description": "Lenguajes de programación, desarrollo de software, algoritmos y estructuras de datos."
+            "name": "Amante de los animales",
+            "description": "Personas apasionadas por los animales y su cuidado."
         },
         {
             "id": "f5992546-98b1-4a06-8e93-78ca74c9cc3e",
-            "name": "Matemáticas y Estadística",
-            "icon": "Sigma",
-            "description": "Álgebra, cálculo, probabilidad, métodos de análisis y visualización de datos."
+            "name": "Gamer",
+            "description": "Jugadores de videojuegos entusiastas."
         },
         {
             "id": "2c967e51-51b5-43f8-b561-edff16203f49",
-            "name": "Escritura y Redacción",
-            "icon": "Feather",
-            "description": "Mejora de ensayos, informes académicos, técnicas de escritura creativa y periodística."
+            "name": "Lector habitual",
+            "description": "Personas que disfrutan de la lectura regularmente."
         },
         {
             "id": "268ff923-40f9-40d7-a401-ab61c88f4f2f",
-            "name": "Investigación Académica",
-            "icon": "Search",
-            "description": "Métodos de investigación, manejo de referencias, normas de citación (APA/MLA) y búsqueda de fuentes."
+            "name": "Deportista",
+            "description": "Personas activas en deportes."
         },
         {
             "id": "478ff9a1-8385-4f3d-ac67-451ec09445a5",
-            "name": "Aprendizaje de Idiomas",
-            "icon": "Globe",
-            "description": "Intercambio de idiomas, práctica conversacional, gramática y preparación para certificaciones."
+            "name": "Fitness",
+            "description": "Entusiastas del fitness y el ejercicio."
         },
         {
             "id": "921cef22-a4c5-4be6-80dc-ce2a1c32d7cd",
-            "name": "Diseño Gráfico y Multimedia",
-            "icon": "Palette",
-            "description": "Ilustración, edición de fotografía y video, manejo de herramientas (como Adobe) y composición visual."
+            "name": "Aficionado a la astronomía",
+            "description": "Amantes de la astronomía y el universo."
         },
         {
             "id": "2545feae-7de6-4ca9-8c73-3455e77aac6a",
-            "name": "Inteligencia Artificial (IA)",
-            "icon": "Brain",
-            "description": "Machine Learning, redes neuronales, modelos generativos y automatización de procesos con IA."
+            "name": "Coleccionista",
+            "description": "Personas que coleccionan objetos diversos."
         },
         {
             "id": "a6a4d497-1377-4406-846d-4983301432d8",
-            "name": "Ciberseguridad",
-            "icon": "Shield",
-            "description": "Hacking ético, protección de datos, privacidad en línea y seguridad de redes."
+            "name": "Bailarín",
+            "description": "Personas apasionadas por el baile."
         },
         {
             "id": "b8510827-76fc-47c2-9fe1-e2ffc20c688c",
-            "name": "Organización Personal / Productividad",
-            "icon": "Clipboard",
-            "description": "Gestión de tiempo (Técnica Pomodoro, GTD), apps de notas y métodos de estudio efectivos."
+            "name": "Ambientalista",
+            "description": "Activistas por el medio ambiente."
         },
         {
             "id": "b8927624-598b-4557-9ef7-cd7c7616b8f6",
-            "name": "Juegos de Mesa y Cartas",
-            "icon": "Dice6",
-            "description": "Estrategia, juegos modernos (Eurogames, Legacy), rol (TTRPG) y reuniones para jugar."
+            "name": "Minimalista",
+            "description": "Personas que practican el minimalismo."
         },
         {
             "id": "ed9a440c-070f-4e19-9357-a9f41eaf66de",
-            "name": "Fotografía y Edición",
-            "icon": "Camera",
-            "description": "Técnicas de captura, composición, postproducción y retoque digital (Lightroom/Photoshop)."
+            "name": "Creador de contenido",
+            "description": "Creadores de contenido en redes y plataformas."
         },
         {
             "id": "28891f5f-b53d-40b9-b834-449bfc291d7e",
-            "name": "Reparaciones y Bricolaje",
-            "icon": "Wrench",
-            "description": "Arreglos caseros básicos, mantenimiento de gadgets, carpintería simple y proyectos DIY."
+            "name": "Pintor",
+            "description": "Artistas dedicados a la pintura."
         },
         {
             "id": "54e99ff2-e213-40f1-948f-7b0896558fee",
-            "name": "Inversiones (Bolsa, Cripto)",
-            "icon": "Wallet",
-            "description": "Trading, análisis de mercados, inversión pasiva y manejo de criptomonedas."
+            "name": "Músico",
+            "description": "Personas dedicadas a la música."
         },
         {
             "id": "417a510b-4531-495a-b90a-d1d2c7ed1397",
-            "name": "Habilidades Sociales / Conversación",
-            "icon": "MessageCircle",
-            "description": "Consejos para romper el hielo, mejorar la comunicación y hacer nuevos amigos en la universidad."
+            "name": "Diseñador gráfico",
+            "description": "Profesionales del diseño gráfico."
         },
         {
             "id": "1b200a29-ba5e-4865-a4ca-3761e1565ce2",
-            "name": "Música y Producción",
-            "icon": "Music",
-            "description": "Tocar instrumentos, composición, teoría musical, mezcla y producción de audio."
+            "name": "Chef",
+            "description": "Personas apasionadas por la cocina."
         },
         {
             "id": "da1db287-3513-4fd3-a6fa-0e026be61556",
-            "name": "Cine, Series y Crítica",
-            "icon": "Film",
-            "description": "Análisis de películas, tendencias de plataformas, géneros y guionismo."
+            "name": "Profesor",
+            "description": "Docentes y educadores."
         },
         {
             "id": "0daeaf1a-5c26-4ae0-a702-30eaeb4006a0",
-            "name": "Deportes y Fitness",
-            "icon": "Dumbbell",
-            "description": "Rutinas de entrenamiento, nutrición, yoga, deportes de equipo y vida activa."
+            "name": "Médico",
+            "description": "Profesionales de la medicina."
         },
         {
             "id": "6bd5c64a-b14b-4059-a2f4-a7ad1c30727d",
-            "name": "Lectura y Literatura",
-            "icon": "BookOpen",
-            "description": "Clubes de lectura, intercambio de libros, crítica literaria, poesía y ficción."
+            "name": "Abogado",
+            "description": "Profesionales del derecho."
         },
         {
             "id": "07732c49-2544-464b-9b42-af5947a34993",
-            "name": "Viajes y Aventura",
-            "icon": "Map",
-            "description": "Planificación de rutas de bajo costo, mochileros, senderismo, exploración y cultura viajera."
+            "name": "Emprendedor",
+            "description": "Personas dedicadas al emprendimiento."
         },
         {
             "id": "7cb3c02a-0195-4be5-a4a1-68cbd725cbf1",
-            "name": "Voluntariado y Sostenibilidad",
-            "icon": "Heart",
-            "description": "Proyectos sociales, activismo estudiantil, ecología, reciclaje y moda sostenible."
+            "name": "Enfermero",
+            "description": "Profesionales de enfermería."
         },
         {
             "id": "89daa763-f41f-4394-92e1-9bd1ee36fded",
-            "name": "Cocina y Gastronomía",
-            "icon": "Utensils",
-            "description": "Recetas fáciles y saludables para estudiantes, cocina internacional y repostería."
-        },
-        {
-            "id": "6bcd6e00-d890-4845-8fcf-cb0637015ed0",
-            "name": "Salud Mental y Bienestar",
-            "icon": "Leaf",
-            "description": "Manejo del estrés, meditación, técnicas de relajación y balance vida-estudio."
+            "name": "Fotógrafo",
+            "description": "Apasionados de la fotografía."
         },
         {
             "id": "0918f776-8314-42ff-bf80-fd70e3bbb27c",
-            "name": "Videojuegos (Gaming)",
-            "icon": "Gamepad",
-            "description": "Consolas, PC, esports, streaming, speedrunning y discusiones sobre la industria."
+            "name": "Progamador",
+            "description": "Jugadores profesionales de videojuegos."
         },
         {
             "id": "19eee1c7-8805-4c6f-86b2-008d0dae6e4d",
-            "name": "Café, Té y Barismo",
-            "icon": "Coffee",
-            "description": "Apreciación del café y té, métodos de preparación, barismo casero y recomendaciones de cafeterías."
-        },
-        {
-            "id": "af0a8ce7-fbf5-4870-bb1e-705b15b515ff",
-            "name": "Mascotas y Cuidado Animal",
-            "icon": "PawPrint",
-            "description": "Compartir experiencias con mascotas, consejos de cuidado, entrenamiento y temas de adopción."
-        },
-        {
-            "id": "d092a7b3-35ef-4418-ba34-8a8b9d7a2680",
-            "name": "Moda y Estilo Personal",
-            "icon": "Shirt",
-            "description": "Tendencias, outfits, costura, compras inteligentes y moda de segunda mano."
-        },
-        {
-            "id": "ad10231a-6f9a-4ea9-8977-5beb405fe60e",
-            "name": "Cultura Friki (Geek)",
-            "icon": "Zap",
-            "description": "Cómics, anime, manga, ciencia ficción, fantasía y coleccionismo de figuras."
-        },
-        {
-            "id": "8a77a8cb-916f-4e07-af66-b859a6d656ac",
-            "name": "Dibujo y Arte (Creatividad)",
-            "icon": "Pencil",
-            "description": "Sketching, pintura, arte digital, ilustración y técnicas creativas."
-        },
-        {
-            "id": "c3ee920f-bcf8-4fc3-9945-fd57d6050386",
-            "name": "Marketing Digital / Redes",
-            "icon": "Share2",
-            "description": "Creación de contenido, estrategias para redes sociales (TikTok, Instagram) y branding personal."
-        },
-        {
-            "id": "aa68902d-9194-4171-8892-f27ab290135d",
-            "name": "Plantas y Jardinería",
-            "icon": "Sprout",
-            "description": "Cuidado de plantas de interior, huertos urbanos, propagación y terrarios."
+            "name": "Escritor",
+            "description": "Personas dedicadas a la escritura."
         }
     ]
 }

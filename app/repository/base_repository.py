@@ -42,7 +42,6 @@ class BaseRepository(ABC, Generic[T]):
         if not encrypted_data:
             return {self.entity_name: []}
         decrypted_data = self.encryption_manager.decrypt_data(encrypted_data)
-        logger.debug(f"Data desencriptado: {decrypted_data}")
         return json.loads(decrypted_data)
 
     def _save_data(self, data: dict):

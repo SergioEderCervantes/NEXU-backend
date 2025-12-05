@@ -30,7 +30,6 @@ class BaseEntity(BaseModel):
 
 class Tag(BaseEntity):
     name: str
-    icon: str
     description: str
 
 class User(BaseEntity):
