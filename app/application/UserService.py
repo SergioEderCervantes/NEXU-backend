@@ -59,7 +59,7 @@ class UserService:
     def update_user_profile(self, user_id: str, data: dict) -> User:
         """
         Updates a user's profile with the given data.
-        Only 'name', 'career', 'date_of_birth', and 'tag_ids' are updatable.
+        Only 'name', 'career', 'bio', 'date_of_birth', and 'tag_ids' are updatable.
         """
         logger.info(f"Updating profile for user with ID: {user_id}")
         user = self.get_user_by_id(user_id)
@@ -72,6 +72,8 @@ class UserService:
             user.name = data["name"]
         if "career" in data:
             user.career = data["career"]
+        if "bio" in data:
+            user.bio = data["bio"]
         if "date_of_birth" in data:
             user.date_of_birth = data["date_of_birth"]
         if "tag_ids" in data:
