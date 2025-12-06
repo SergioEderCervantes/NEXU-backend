@@ -39,7 +39,7 @@ class User(BaseEntity):
     is_active: bool = True
     career: Optional[str] = None
     gender: Optional[str] = None
-    date_of_birth: Optional[date] = None
+    date_of_birth: Optional[date] = Field(default_factory=date.today)
     bio: Optional[str] = None
     tag_ids: List[str] = Field(default_factory=list)
     avatar_url: Optional[str] = "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
