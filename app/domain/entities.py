@@ -1,6 +1,6 @@
 from enum import Enum
 import os
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, field_validator
 from typing import Any, Optional, List
 from app.config.settings import Config
 from app.utils.hashing import hash_password
@@ -39,11 +39,19 @@ class User(BaseEntity):
     is_active: bool = True
     career: Optional[str] = None
     gender: Optional[str] = None
-    date_of_birth: Optional[date] = Field(default_factory=date.today)
+    date_of_birth: Optional[date] = None
     bio: Optional[str] = None
     tag_ids: List[str] = Field(default_factory=list)
     avatar_url: Optional[str] = "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
-
+    
+    
+    @field_validator("date_of_birth", mode="before")
+    def parse_date_of_birth(cls, v):
+        if isinstance(v, str):
+            return date.fromisoformat(v)
+        return v
+    
+    
     @model_validator(mode='before')
     @classmethod
     def hash_password_on_creation(cls, data: Any) -> Any:
@@ -58,6 +66,8 @@ class User(BaseEntity):
             if not (isinstance(password, str) and password.startswith('$2b$') and len(password) == 60):
                 data['password'] = hash_password(password)
         return data
+
+        
 
 
 class Chat(BaseEntity):
