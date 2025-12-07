@@ -53,8 +53,6 @@ backend/
 │
 ├── logs/                        # Archivos de logs del sistema
 │
-├── Dockerfile                   # Definición de la imagen base del backend
-├── docker-compose.yml            # Orquestación de servicios 
 └── requirements.txt              # Dependencias del proyecto
 ```
 
@@ -107,7 +105,7 @@ Cada acción registrada (lectura, desencriptación, consulta, escritura, etc.) g
 2025-11-10 14:20:03 - INFO - [app_logger] - Tarea 'read_user_data' ejecutada en 0.052s
 ```
 
-Los logs se almacenan en `/logs/app.log`, montado en el host para análisis externo.
+Los logs se almacenan en `/logs/app.log`.
 
 ---
 
@@ -124,22 +122,68 @@ Las tareas automáticas se definen en `app/config/scheduler.py` y pueden incluir
 
 ## 🧰 Instalación y ejecución
 
+El proyecto se puede configurar y ejecutar tanto en entornos Windows como Linux (Debian) usando los scripts proporcionados.
+
 ### 1️⃣ Clonar el repositorio
 
-
-### 2️⃣ Construir la imagen y levantar servicios
-
 ```bash
-docker compose up --build
+git clone <URL_DEL_REPOSITORIO>
+cd backend
 ```
 
-### 3️⃣ Acceder a la API
+### 2️⃣ Configuración del entorno
 
+#### En Windows (con PowerShell)
+
+1.  **Ejecutar el script de configuración**:
+    Abre una terminal de PowerShell y ejecuta:
+    ```powershell
+    .\scripts\setup.ps1
+    ```
+    Este script creará un entorno virtual, instalará las dependencias, generará una clave de encriptación y preparará la estructura de carpetas.
+
+2.  **Guardar la clave de encriptación**:
+    El script te pedirá que copies la clave generada en el archivo `.env`. Abre el archivo y pégala como valor de `FERNET_KEY`.
+
+#### En Linux (Debian)
+
+1.  **Dar permisos de ejecución a los scripts**:
+    Abre una terminal y ejecuta:
+    ```bash
+    chmod +x scripts/setup.sh scripts/start_server.sh
+    ```
+
+2.  **Ejecutar el script de configuración**:
+    ```bash
+    ./scripts/setup.sh
+    ```
+    El script realizará la misma configuración que su contraparte de Windows.
+
+3.  **Guardar la clave de encriptación**:
+    Al igual que en Windows, el script te pedirá que guardes la clave generada en el archivo `.env`.
+
+### 3️⃣ Iniciar el servidor
+
+#### En Windows
+
+```powershell
+.\scripts\start_server.ps1
+```
+
+#### En Linux
+
+```bash
+./scripts/start_server.sh
+```
+
+### 4️⃣ Acceder a la API
+
+Una vez que el servidor esté en ejecución, puedes verificar que funciona accediendo a:
 ```
 http://localhost:5000/health
 ```
 
-Si esto funciona, el servidor esta ejecutandose!, revisa el `app/api/__init__.py` para ver las demas rutas a la api
+Si la respuesta es exitosa, ¡el servidor está listo! Revisa `app/api/__init__.py` para descubrir las demás rutas de la API.
 
 ---
 <!-- 
@@ -161,22 +205,16 @@ Si esto funciona, el servidor esta ejecutandose!, revisa el `app/api/__init__.py
 * **jsonpath-ng** — consultas dinámicas sobre estructuras JSON.
 * **cryptography** — encriptación de archivos.
 * **APScheduler** — tareas periódicas.
-* **Docker Compose** — orquestación de servicios.
 
 ---
 
 ## Ejecucion de test con coverage:
 
-```bash
-     python -m pytest --cov=app --cov-report=html --cov-report=term-missing
-```
-
--> Si lo quieres con Docker:
+Para ejecutar la suite de pruebas y ver un reporte de cobertura, asegúrate de tener el entorno virtual activado y ejecuta:
 
 ```bash
-     docker compose exec python -m pytest --cov=app --cov-report=html --cov-report=term-missing
+python -m pytest --cov=app --cov-report=html --cov-report=term-missing
 ```
-
 
 <!-- ## 🧩 Roadmap
 
