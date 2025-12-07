@@ -263,9 +263,15 @@ class ChatService:
 
     def load_chat_msgs(self, chat:Chat, user:User | str):
         messages = self.message_repository.find_by_conversation_id(chat.id)
+        current_user_id = user.id if isinstance(user, User) else user
+
         for message in messages:
-            message.delivered = True
-            message.timestamp = message.timestamp.isoformat()  # type: ignore
+            if message.sender_id != current_user_id and not message.delivered:
+                message.delivered = True
+                self.message_repository.update(message)
+
+            if isinstance(message.timestamp, datetime):
+                message.timestamp = message.timestamp.isoformat()
         return messages
     
     def get_all(self):
