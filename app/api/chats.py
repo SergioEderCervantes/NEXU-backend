@@ -28,6 +28,27 @@ def get_user_chats():
             {"error": "Ocurrió un error inesperado al obtener los chats."}
         ), 500
 
+@chats_bp.route("/user/<target_user_id>", methods=["GET"])
+@token_required
+def get_chat_by_user_id(target_user_id: str):
+    """
+    Get all messages for a specific chat, sorted by timestamp.
+    The user must be a participant in the chat to access its messages.
+    """
+    try:
+        current_user_id = g.current_user.id
+        messages = chat_service.find_chat_by_user_ids(current_user_id, target_user_id)
+        if messages is None:
+            return jsonify({"data": []}), 200
+        
+        messages_dict = [message.model_dump() for message in messages]
+        return jsonify({"data": messages_dict}), 200
+        
+    except Exception as e:
+        logger.error(f"server error: {e}")
+        return jsonify({"error": "Ha ocurrido un error inesperado"}), 500
+
+
 @chats_bp.route("/<chat_id>", methods=["GET"])
 @token_required
 def get_chat_messages(chat_id):
@@ -42,7 +63,7 @@ def get_chat_messages(chat_id):
         chat = chat_service.chat_repository.find_by_id(chat_id)
         if not chat:
             logger.warning(f"Chat {chat_id} not found.")
-            return jsonify({"error": "Chat no encontrado."}), 404
+            return jsonify({"data": []}), 200
         
         # Check if current user is a participant
         if current_user_id not in [chat.user_a, chat.user_b]:

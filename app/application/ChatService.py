@@ -171,6 +171,7 @@ class ChatService:
             message: The message that was sent.
         """
         logger.info(f"Sending dm to {reciever.name} from: {sender.name}")
+        timestamp_str = message.timestamp.isoformat()
         socketio.emit(
             "new_notification",
             {
@@ -178,7 +179,8 @@ class ChatService:
                 "sender_id": sender.id,
                 "sender_name": sender.name,
                 "message": message.content,
-                "message_id": message.id
+                "message_id": message.id,
+                "timestamp": timestamp_str
             },
             to=reciever.id,
         )
@@ -241,8 +243,29 @@ class ChatService:
 
         return response
 
+    def find_chat_by_user_ids(self, current_user_id: str, target_user_id: str):
+        """
+        Finds a chat between the current user and a target user, and returns its messages.
+
+        Args:
+            current_user_id (str): The ID of the current user.
+            target_user_id (str): The ID of the target user.
+
+        Returns:
+            A list of messages if the chat is found, otherwise None.
+        """
+        chat = self.chat_repository.find_chat_by_users(current_user_id, target_user_id)
+
+        if not chat:
+            return None
+
+        return self.load_chat_msgs(chat, current_user_id)
+
     def load_chat_msgs(self, chat:Chat, user:User | str):
         messages = self.message_repository.find_by_conversation_id(chat.id)
+        for message in messages:
+            message.delivered = True
+            message.timestamp = message.timestamp.isoformat()  # type: ignore
         return messages
     
     def get_all(self):

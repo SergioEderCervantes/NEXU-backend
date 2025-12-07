@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, model_validator, field_validator
 from typing import Any, Optional, List
 from app.config.settings import Config
 from app.utils.hashing import hash_password
-from datetime import datetime, date, timezone
+from datetime import datetime, date
 import uuid
 
 class DbFile(Enum):

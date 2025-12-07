@@ -377,7 +377,7 @@ curl -X POST \
 
 ---
 
-## 10. Get Chat Messages
+## 10. Get Chat Messages by Chat ID
 
 **Endpoint:** `GET /chats/<chat_id>`
 
@@ -392,7 +392,7 @@ curl -X POST \
 
 **Response:**
 *   **Success (200 OK):**
-    *   **Body:** An array of message objects.
+    *   **Body:** An array of message objects. If the chat is not found, an empty array is returned.
     ```json
     {
         "data": [
@@ -409,12 +409,45 @@ curl -X POST \
     }
     ```
 *   **Error (403 Forbidden):** If the user is not a participant of the chat.
-*   **Error (404 Not Found):** If the chat is not found.
 *   **Error (500 Internal Server Error):** For unexpected issues.
 
 ---
 
-## 11. Health Check
+## 11. Get Chat Messages by User ID
+
+**Endpoint:** `GET /chats/user/<target_user_id>`
+
+**Description:** Retrieves all messages in a chat between the current authenticated user and the specified `target_user_id`.
+
+**Authentication:** Required. A valid JWT must be provided in the `Authorization` header.
+
+**Request:**
+*   **Method:** `GET`
+*   **Headers:**
+    *   `Authorization: Bearer <your_access_token>`
+
+**Response:**
+*   **Success (200 OK):**
+    *   **Body:** An array of message objects. If no chat exists between the users, an empty array is returned.
+    ```json
+    {
+        "data": [
+            {
+                "id": "message-id-1",
+                "conversation_id": "chat-id-between-users",
+                "sender_id": "user-id-1",
+                "content": "Hi!",
+                "timestamp": "2025-12-06T11:00:00Z",
+                "delivered": true
+            }
+        ]
+    }
+    ```
+*   **Error (500 Internal Server Error):** For unexpected issues.
+
+---
+
+## 12. Health Check
 
 **Endpoint:** `GET /health/`
 
@@ -434,7 +467,7 @@ curl -X POST \
 
 ---
 
-## 12. Get All Posts
+## 13. Get All Posts
 
 **Endpoint:** `GET /posts/`
 
@@ -484,7 +517,7 @@ curl -X POST \
 
 ---
 
-## 13. Create Post
+## 14. Create Post
 
 **Endpoint:** `POST /posts/`
 
@@ -524,7 +557,7 @@ curl -X POST \
 
 ---
 
-## 14. Delete Post
+## 15. Delete Post
 
 **Endpoint:** `DELETE /posts/<post_id>`
 
