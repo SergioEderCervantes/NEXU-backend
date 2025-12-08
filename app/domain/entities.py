@@ -42,7 +42,7 @@ class User(BaseEntity):
     date_of_birth: Optional[date] = None
     bio: Optional[str] = None
     tag_ids: List[str] = Field(default_factory=list)
-    avatar_url: Optional[str] = "https://res.cloudinary.com/dextv1cgm/image/upload/v1764717519/k0fahusthlf5lmhdjnkh.png"
+    avatar_url: Optional[str] = None
     
     
     @field_validator("date_of_birth", mode="before")
